@@ -2,14 +2,15 @@ package com.v1.nfe.integration.cbenef.core.extractor
 
 import com.v1.nfe.integration.cbenef.client.CBenefAvailabilityClient
 import com.v1.nfe.integration.cbenef.client.CBenefDownloadClient
-import com.v1.nfe.integration.cbenef.config.CBenefConfig
+import com.v1.nfe.integration.cbenef.config.CBenefProperties
 import com.v1.nfe.integration.cbenef.dto.CBenefSourceData
 import com.v1.nfe.integration.cbenef.enums.CBenefBenefitType
 import com.v1.nfe.integration.cbenef.enums.DocumentFormat
-import org.springframework.stereotype.Component
-import java.io.InputStream
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.text.PDFTextStripper
+import org.springframework.stereotype.Component
+import java.io.InputStream
+
 
 import org.slf4j.LoggerFactory
 import java.time.LocalDate
@@ -19,7 +20,7 @@ import java.util.regex.Pattern
 
 @Component
 class SCCBenefExtractor(
-    config: CBenefConfig,
+    config: CBenefProperties,
     downloadClient: CBenefDownloadClient,
     availabilityClient: CBenefAvailabilityClient
 ) : BaseCBenefExtractor(config, downloadClient, availabilityClient) {

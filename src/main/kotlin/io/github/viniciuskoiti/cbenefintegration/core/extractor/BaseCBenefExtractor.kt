@@ -1,7 +1,7 @@
 package com.v1.nfe.integration.cbenef.core.extractor
 import com.v1.nfe.integration.cbenef.client.CBenefAvailabilityClient
 import com.v1.nfe.integration.cbenef.client.CBenefDownloadClient
-import com.v1.nfe.integration.cbenef.config.CBenefConfig
+import com.v1.nfe.integration.cbenef.config.CBenefProperties
 import com.v1.nfe.integration.cbenef.core.CBenefExtractor
 import com.v1.nfe.integration.cbenef.dto.CBenefExtractionResult
 import com.v1.nfe.integration.cbenef.dto.CBenefSourceData
@@ -10,7 +10,7 @@ import com.v1.nfe.integration.cbenef.dto.ValidationError
 import java.io.InputStream
 
 abstract class BaseCBenefExtractor(
-    override val config: CBenefConfig,
+    override val config: CBenefProperties,
     protected val downloadClient: CBenefDownloadClient,
     protected val availabilityClient: CBenefAvailabilityClient
 ) : CBenefExtractor {
