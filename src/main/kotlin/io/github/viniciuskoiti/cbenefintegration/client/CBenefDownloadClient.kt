@@ -1,17 +1,15 @@
-package com.v1.nfe.integration.cbenef.client
+package io.github.viniciuskoiti.cbenefintegration.client
 
-import com.v1.nfe.integration.cbenef.client.CBenefHttpClient
-import com.v1.nfe.integration.cbenef.config.CBenefConfig
+import com.v1.nfe.integration.cbenef.config.CBenefProperties
 import com.v1.nfe.integration.cbenef.exception.CBenefSourceUnavailableException
 import org.springframework.stereotype.Service
 import java.io.InputStream
 import java.net.http.HttpResponse
-import java.time.LocalDateTime
 
 @Service
 class CBenefDownloadClient(
     private val httpClient: CBenefHttpClient,
-    private val config: CBenefConfig
+    private val config: CBenefProperties
 ) {
 
     fun downloadDocument(stateCode: String): HttpResponse<InputStream> {
@@ -41,7 +39,7 @@ class CBenefDownloadClient(
                 } catch (e: Exception) {
                     lastException = e
                     if (attempt < maxRetries - 1) {
-                        Thread.sleep(config.retryDelay * (attempt + 1)) // Backoff exponencial
+                        Thread.sleep(config.connection.retryDelay * (attempt + 1)) // Backoff exponencial
                     }
                 }
             }

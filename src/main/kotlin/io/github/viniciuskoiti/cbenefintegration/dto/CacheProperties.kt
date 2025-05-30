@@ -1,4 +1,4 @@
-package com.v1.nfe.integration.cbenef.dto
+package io.github.viniciuskoiti.cbenefintegration.dto
 
 import jakarta.validation.constraints.Max
 import jakarta.validation.constraints.Min

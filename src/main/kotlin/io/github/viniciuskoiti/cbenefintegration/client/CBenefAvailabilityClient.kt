@@ -1,6 +1,6 @@
-package com.v1.nfe.integration.cbenef.client
+package io.github.viniciuskoiti.cbenefintegration.client
 
-import com.v1.nfe.integration.cbenef.config.CBenefConfig
+import com.v1.nfe.integration.cbenef.config.CBenefProperties
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter
 @Service
 class CBenefAvailabilityClient(
     private val httpClient: CBenefHttpClient,
-    private val config: CBenefConfig
+    private val config: CBenefProperties
 ) {
 
     fun checkSourceAvailability(stateCode: String): Boolean {

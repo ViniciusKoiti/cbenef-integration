@@ -1,4 +1,4 @@
-package com.v1.nfe.integration.cbenef.enums
+package io.github.viniciuskoiti.cbenefintegration.enums
 
 enum class ExtractionStatus {
     SUCCESS, ERROR, SOURCE_UNAVAILABLE, PARTIAL_SUCCESS

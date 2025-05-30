@@ -1,6 +1,6 @@
 package com.v1.nfe.integration.cbenef.dto
 
-import com.v1.nfe.integration.cbenef.enums.ExtractionStatus
+import io.github.viniciuskoiti.cbenefintegration.enums.ExtractionStatus
 import java.time.LocalDateTime
 
 data class CBenefExtractionResult(

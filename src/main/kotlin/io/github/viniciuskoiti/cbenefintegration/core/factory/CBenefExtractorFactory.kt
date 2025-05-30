@@ -1,16 +1,16 @@
-package com.v1.nfe.integration.cbenef.core.factory
+package io.github.viniciuskoiti.cbenefintegration.core.factory
 
 
-import com.v1.nfe.integration.cbenef.client.CBenefAvailabilityClient
-import com.v1.nfe.integration.cbenef.client.CBenefDownloadClient
-import com.v1.nfe.integration.cbenef.config.CBenefConfig
-import com.v1.nfe.integration.cbenef.core.CBenefExtractor
-import com.v1.nfe.integration.cbenef.core.extractor.SCCBenefExtractor
+import io.github.viniciuskoiti.cbenefintegration.client.CBenefAvailabilityClient
+import io.github.viniciuskoiti.cbenefintegration.client.CBenefDownloadClient
+import com.v1.nfe.integration.cbenef.config.CBenefProperties
+import io.github.viniciuskoiti.cbenefintegration.core.CBenefExtractor
+import io.github.viniciuskoiti.cbenefintegration.core.extractor.SCCBenefExtractor
 import org.springframework.stereotype.Component
 
 @Component
 class CBenefExtractorFactory(
-    private val config: CBenefConfig,
+    private val config: CBenefProperties,
     private val downloadClient: CBenefDownloadClient,
     private val availabilityClient: CBenefAvailabilityClient
 ) {

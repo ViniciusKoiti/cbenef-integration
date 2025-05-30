@@ -1,7 +1,7 @@
 
-package com.v1.nfe.integration.cbenef.core
+package io.github.viniciuskoiti.cbenefintegration.core
 
-import com.v1.nfe.integration.cbenef.config.CBenefConfig
+import com.v1.nfe.integration.cbenef.config.CBenefProperties
 import com.v1.nfe.integration.cbenef.dto.CBenefExtractionResult
 import com.v1.nfe.integration.cbenef.dto.CBenefSourceData
 import com.v1.nfe.integration.cbenef.dto.ValidationResult
@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 interface CBenefExtractor {
     val stateCode: String
     val supportedFormats: List<DocumentFormat>
-    val config: CBenefConfig
+    val config: CBenefProperties
     val sourceName: String
         get() = "SEFAZ $stateCode - CBenef"
     val sourceUrl: String

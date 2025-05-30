@@ -1,8 +1,9 @@
 package com.v1.nfe.integration.cbenef.config
 
-import com.v1.nfe.integration.cbenef.dto.CacheProperties
+import io.github.viniciuskoiti.cbenefintegration.dto.CacheProperties
 import com.v1.nfe.integration.cbenef.dto.ConnectionProperties
 import com.v1.nfe.integration.cbenef.dto.SyncProperties
+import io.github.viniciuskoiti.cbenefintegration.config.StateConfig
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.NestedConfigurationProperty
 import org.springframework.stereotype.Component

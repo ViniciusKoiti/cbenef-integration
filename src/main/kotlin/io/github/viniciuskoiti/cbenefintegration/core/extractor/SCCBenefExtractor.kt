@@ -1,7 +1,7 @@
-package com.v1.nfe.integration.cbenef.core.extractor
+package io.github.viniciuskoiti.cbenefintegration.core.extractor
 
-import com.v1.nfe.integration.cbenef.client.CBenefAvailabilityClient
-import com.v1.nfe.integration.cbenef.client.CBenefDownloadClient
+import io.github.viniciuskoiti.cbenefintegration.client.CBenefAvailabilityClient
+import io.github.viniciuskoiti.cbenefintegration.client.CBenefDownloadClient
 import com.v1.nfe.integration.cbenef.config.CBenefProperties
 import com.v1.nfe.integration.cbenef.dto.CBenefSourceData
 import com.v1.nfe.integration.cbenef.enums.CBenefBenefitType

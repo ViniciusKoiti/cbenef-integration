@@ -1,6 +1,6 @@
 package com.v1.nfe.integration.cbenef.service
 
-import com.v1.nfe.integration.cbenef.core.factory.CBenefExtractorFactory
+import io.github.viniciuskoiti.cbenefintegration.core.factory.CBenefExtractorFactory
 import com.v1.nfe.integration.cbenef.dto.CBenefExtractionResult
 import com.v1.nfe.integration.cbenef.exception.CBenefExtractionException
 import org.slf4j.LoggerFactory

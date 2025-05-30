@@ -1,6 +1,6 @@
-package com.v1.nfe.integration.cbenef.client
+package io.github.viniciuskoiti.cbenefintegration.client
 
-import com.v1.nfe.integration.cbenef.config.CBenefConfig
+import com.v1.nfe.integration.cbenef.config.CBenefProperties
 import org.springframework.stereotype.Component
 import java.io.InputStream
 import java.net.URI
@@ -10,10 +10,10 @@ import java.net.http.HttpResponse
 import java.time.Duration
 
 @Component
-class CBenefHttpClient(private val config: CBenefConfig) {
+class CBenefHttpClient(private val config: CBenefProperties) {
 
     private val httpClient = HttpClient.newBuilder()
-        .connectTimeout(Duration.ofMillis(config.connectionTimeout))
+        .connectTimeout(Duration.ofMillis(config.connection.timeout))
         .followRedirects(HttpClient.Redirect.NORMAL)
         .build()
 
@@ -21,12 +21,12 @@ class CBenefHttpClient(private val config: CBenefConfig) {
         url: String,
         method: String = "GET",
         headers: Map<String, String> = emptyMap(),
-        timeout: Long = config.readTimeout
+        timeout: Long = config.connection.readTimeout
     ): HttpResponse<InputStream> {
         val requestBuilder = HttpRequest.newBuilder()
             .uri(URI.create(url))
             .timeout(Duration.ofMillis(timeout))
-            .header("User-Agent", config.userAgent)
+            .header("User-Agent", config.connection.userAgent)
 
         headers.forEach { (key, value) ->
             requestBuilder.header(key, value)
@@ -50,7 +50,7 @@ class CBenefHttpClient(private val config: CBenefConfig) {
             .uri(URI.create(url))
             .GET()
             .timeout(Duration.ofMillis(timeout))
-            .header("User-Agent", config.userAgent)
+            .header("User-Agent", config.connection.userAgent)
 
         headers.forEach { (key, value) ->
             requestBuilder.header(key, value)
