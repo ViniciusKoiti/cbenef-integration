@@ -1,6 +1,6 @@
 package io.github.viniciuskoiti.cbenefintegration
 
-import com.v1.nfe.integration.cbenef.dto.CBenefSourceData
+import io.github.viniciuskoiti.cbenefintegration.dto.CBenefSourceData
 import com.v1.nfe.integration.cbenef.service.CBenefService
 import org.springframework.stereotype.Component
 

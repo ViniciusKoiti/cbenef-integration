@@ -1,6 +1,7 @@
-package com.v1.nfe.integration.cbenef.exception
+package io.github.viniciuskoiti.cbenefintegration.exception
 
-import com.v1.nfe.integration.cbenef.dto.ValidationResult
+import io.github.viniciuskoiti.cbenefintegration.dto.ValidationResult
+import io.github.viniciuskoiti.cbenefintegration.exception.CBenefException
 
 class CBenefValidationException(
     message: String,

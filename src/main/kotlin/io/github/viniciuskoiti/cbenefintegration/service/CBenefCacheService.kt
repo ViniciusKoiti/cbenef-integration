@@ -1,7 +1,8 @@
-package com.v1.nfe.integration.cbenef.service
+package io.github.viniciuskoiti.cbenefintegration.service
 
-import com.v1.nfe.integration.cbenef.config.CBenefProperties
-import com.v1.nfe.integration.cbenef.dto.CBenefExtractionResult
+import com.v1.nfe.integration.cbenef.service.CBenefIntegrationService
+import io.github.viniciuskoiti.cbenefintegration.config.CBenefProperties
+import io.github.viniciuskoiti.cbenefintegration.dto.CBenefExtractionResult
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.scheduling.annotation.Scheduled

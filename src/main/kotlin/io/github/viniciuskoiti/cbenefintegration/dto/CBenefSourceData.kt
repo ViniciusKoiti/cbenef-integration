@@ -1,7 +1,7 @@
-package com.v1.nfe.integration.cbenef.dto
+package io.github.viniciuskoiti.cbenefintegration.dto
 
-import com.v1.nfe.integration.cbenef.enums.CBenefBenefitType
-import com.v1.nfe.integration.cbenef.enums.CBenefInvoicePurpose
+import io.github.viniciuskoiti.cbenefintegration.enums.CBenefBenefitType
+import io.github.viniciuskoiti.cbenefintegration.enums.CBenefInvoicePurpose
 import java.time.LocalDate
 
 data class CBenefSourceData(

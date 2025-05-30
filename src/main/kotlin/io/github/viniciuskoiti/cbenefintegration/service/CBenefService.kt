@@ -1,7 +1,9 @@
 package com.v1.nfe.integration.cbenef.service
 
-import com.v1.nfe.integration.cbenef.config.CBenefProperties
-import com.v1.nfe.integration.cbenef.dto.CBenefSourceData
+import io.github.viniciuskoiti.cbenefintegration.config.CBenefProperties
+import io.github.viniciuskoiti.cbenefintegration.dto.CBenefSourceData
+import io.github.viniciuskoiti.cbenefintegration.service.CBenefCacheService
+import io.github.viniciuskoiti.cbenefintegration.service.CBenefSearchService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 

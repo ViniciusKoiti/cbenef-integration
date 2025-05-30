@@ -1,11 +1,11 @@
 
 package io.github.viniciuskoiti.cbenefintegration.core
 
-import com.v1.nfe.integration.cbenef.config.CBenefProperties
-import com.v1.nfe.integration.cbenef.dto.CBenefExtractionResult
-import com.v1.nfe.integration.cbenef.dto.CBenefSourceData
-import com.v1.nfe.integration.cbenef.dto.ValidationResult
-import com.v1.nfe.integration.cbenef.enums.DocumentFormat
+import io.github.viniciuskoiti.cbenefintegration.config.CBenefProperties
+import io.github.viniciuskoiti.cbenefintegration.dto.CBenefExtractionResult
+import io.github.viniciuskoiti.cbenefintegration.dto.CBenefSourceData
+import io.github.viniciuskoiti.cbenefintegration.dto.ValidationResult
+import io.github.viniciuskoiti.cbenefintegration.enums.DocumentFormat
 import java.time.LocalDateTime
 interface CBenefExtractor {
     val stateCode: String

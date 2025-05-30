@@ -1,7 +1,7 @@
 package io.github.viniciuskoiti.cbenefintegration.client
 
-import com.v1.nfe.integration.cbenef.config.CBenefProperties
-import com.v1.nfe.integration.cbenef.exception.CBenefSourceUnavailableException
+import io.github.viniciuskoiti.cbenefintegration.config.CBenefProperties
+import io.github.viniciuskoiti.cbenefintegration.exception.CBenefSourceUnavailableException
 import org.springframework.stereotype.Service
 import java.io.InputStream
 import java.net.http.HttpResponse

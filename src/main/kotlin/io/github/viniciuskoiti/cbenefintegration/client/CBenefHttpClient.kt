@@ -1,6 +1,6 @@
 package io.github.viniciuskoiti.cbenefintegration.client
 
-import com.v1.nfe.integration.cbenef.config.CBenefProperties
+import io.github.viniciuskoiti.cbenefintegration.config.CBenefProperties
 import org.springframework.stereotype.Component
 import java.io.InputStream
 import java.net.URI

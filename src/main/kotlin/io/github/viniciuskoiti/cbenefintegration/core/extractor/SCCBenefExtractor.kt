@@ -2,10 +2,10 @@ package io.github.viniciuskoiti.cbenefintegration.core.extractor
 
 import io.github.viniciuskoiti.cbenefintegration.client.CBenefAvailabilityClient
 import io.github.viniciuskoiti.cbenefintegration.client.CBenefDownloadClient
-import com.v1.nfe.integration.cbenef.config.CBenefProperties
-import com.v1.nfe.integration.cbenef.dto.CBenefSourceData
-import com.v1.nfe.integration.cbenef.enums.CBenefBenefitType
-import com.v1.nfe.integration.cbenef.enums.DocumentFormat
+import io.github.viniciuskoiti.cbenefintegration.config.CBenefProperties
+import io.github.viniciuskoiti.cbenefintegration.dto.CBenefSourceData
+import io.github.viniciuskoiti.cbenefintegration.enums.CBenefBenefitType
+import io.github.viniciuskoiti.cbenefintegration.enums.DocumentFormat
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.text.PDFTextStripper
 import org.springframework.stereotype.Component

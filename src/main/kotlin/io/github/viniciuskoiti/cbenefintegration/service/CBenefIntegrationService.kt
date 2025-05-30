@@ -1,8 +1,8 @@
 package com.v1.nfe.integration.cbenef.service
 
 import io.github.viniciuskoiti.cbenefintegration.core.factory.CBenefExtractorFactory
-import com.v1.nfe.integration.cbenef.dto.CBenefExtractionResult
-import com.v1.nfe.integration.cbenef.exception.CBenefExtractionException
+import io.github.viniciuskoiti.cbenefintegration.dto.CBenefExtractionResult
+import io.github.viniciuskoiti.cbenefintegration.exception.CBenefExtractionException
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.util.concurrent.CompletableFuture

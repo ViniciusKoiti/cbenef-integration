@@ -1,12 +1,12 @@
 package io.github.viniciuskoiti.cbenefintegration.core.extractor
 import io.github.viniciuskoiti.cbenefintegration.client.CBenefAvailabilityClient
 import io.github.viniciuskoiti.cbenefintegration.client.CBenefDownloadClient
-import com.v1.nfe.integration.cbenef.config.CBenefProperties
+import io.github.viniciuskoiti.cbenefintegration.config.CBenefProperties
 import io.github.viniciuskoiti.cbenefintegration.core.CBenefExtractor
-import com.v1.nfe.integration.cbenef.dto.CBenefExtractionResult
-import com.v1.nfe.integration.cbenef.dto.CBenefSourceData
-import com.v1.nfe.integration.cbenef.dto.ValidationResult
-import com.v1.nfe.integration.cbenef.dto.ValidationError
+import io.github.viniciuskoiti.cbenefintegration.dto.CBenefExtractionResult
+import io.github.viniciuskoiti.cbenefintegration.dto.CBenefSourceData
+import io.github.viniciuskoiti.cbenefintegration.dto.ValidationResult
+import io.github.viniciuskoiti.cbenefintegration.dto.ValidationError
 import java.io.InputStream
 
 abstract class BaseCBenefExtractor(

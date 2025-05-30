@@ -1,4 +1,4 @@
-package com.v1.nfe.integration.cbenef.enums
+package io.github.viniciuskoiti.cbenefintegration.enums
 
 enum class CBenefBenefitType(val code: String, val description: String) {
     ISENCAO("1", "Isenção"),

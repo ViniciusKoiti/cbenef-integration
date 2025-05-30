@@ -1,4 +1,4 @@
-package com.v1.nfe.integration.cbenef.enums
+package io.github.viniciuskoiti.cbenefintegration.enums
 
 enum class CBenefInvoicePurpose(val code: String, val description: String) {
     VENDA("01", "Venda"),
