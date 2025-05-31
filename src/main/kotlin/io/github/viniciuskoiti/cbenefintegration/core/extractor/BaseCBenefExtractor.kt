@@ -51,29 +51,9 @@ abstract class BaseCBenefExtractor(
         var validRecords = 0
 
         data.forEachIndexed { index, record ->
-            var recordValid = true
-
-            if (record.code.isBlank()) {
-                errors.add(ValidationError(index, "code", record.code, "Código não pode ser vazio"))
-                recordValid = false
+            if (isRecordValid(record, index, errors)) {
+                validRecords++
             }
-
-            if (record.description.isBlank()) {
-                errors.add(ValidationError(index, "description", record.description, "Descrição não pode ser vazia"))
-                recordValid = false
-            }
-
-            if (record.endDate != null && record.endDate.isBefore(record.startDate)) {
-                errors.add(ValidationError(index, "endDate", record.endDate.toString(), "Data fim não pode ser anterior à data início"))
-                recordValid = false
-            }
-
-            if (record.stateCode != stateCode) {
-                errors.add(ValidationError(index, "stateCode", record.stateCode, "Código do estado não confere"))
-                recordValid = false
-            }
-
-            if (recordValid) validRecords++
         }
 
         return ValidationResult(
@@ -82,6 +62,34 @@ abstract class BaseCBenefExtractor(
             invalidRecords = data.size - validRecords,
             errors = errors
         )
+    }
+
+    private fun isRecordValid(
+        record: CBenefSourceData,
+        index: Int,
+        errors: MutableList<ValidationError>
+    ): Boolean {
+        if (record.code.isBlank()) {
+            errors.add(ValidationError(index, "code", record.code, "Código não pode ser vazio"))
+            return false
+        }
+
+        if (record.description.isBlank()) {
+            errors.add(ValidationError(index, "description", record.description, "Descrição não pode ser vazia"))
+            return false
+        }
+
+        if (record.endDate != null && record.endDate.isBefore(record.startDate)) {
+            errors.add(ValidationError(index, "endDate", record.endDate.toString(), "Data fim não pode ser anterior à data início"))
+            return false
+        }
+
+        if (record.stateCode != stateCode) {
+            errors.add(ValidationError(index, "stateCode", record.stateCode, "Código do estado não confere"))
+            return false
+        }
+
+        return true
     }
 
     protected abstract fun extractFromDocument(inputStream: InputStream): List<CBenefSourceData>
