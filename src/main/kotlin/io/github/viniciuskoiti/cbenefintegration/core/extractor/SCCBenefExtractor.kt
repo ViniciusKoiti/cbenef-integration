@@ -34,7 +34,7 @@ class SCCBenefExtractor(
         return availabilityClient.getLastModified(stateCode)
     }
 
-    override fun extractFromDocument(inputStream: InputStream): List<CBenefSourceData> {
+    public override fun extractFromDocument(inputStream: InputStream): List<CBenefSourceData> {
         return try {
             PDDocument.load(inputStream).use { document ->
                 val stripper = PDFTextStripper()
