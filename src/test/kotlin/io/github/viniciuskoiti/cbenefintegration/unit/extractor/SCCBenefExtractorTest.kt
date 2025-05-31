@@ -50,7 +50,6 @@ class SCCBenefExtractorTest : BehaviorSpec({
     Given("um extrator de SC configurado") {
 
         When("verifica disponibilidade da fonte") {
-            // Configurar mock específico para este teste
             every { mockAvailabilityClient.checkSourceAvailability("SC") } returns true
 
             Then("deve retornar verdadeiro") {
