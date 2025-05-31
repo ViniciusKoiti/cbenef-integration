@@ -83,7 +83,6 @@ class CBenefCacheService(
         val cached = cache[stateCode]
         return cached != null && !cached.isExpired()
     }
-
     fun getStats(): Map<String, Any> {
         val validEntries = cache.filterValues { !it.isExpired() }
         val totalBenefits = validEntries.values.sumOf { it.result.extractedCount }

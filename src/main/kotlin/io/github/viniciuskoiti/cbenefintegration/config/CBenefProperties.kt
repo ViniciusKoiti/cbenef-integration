@@ -63,6 +63,10 @@ data class CBenefProperties(
         return states[stateCode]?.priority ?: 99
     }
 
+    fun isCacheEnabled(): Boolean{
+        return cache.enabled;
+    }
+
     companion object {
         fun getDefaultStatesConfig(): Map<String, StateConfig> {
             return mapOf(

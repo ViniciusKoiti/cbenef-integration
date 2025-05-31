@@ -8,16 +8,26 @@ plugins {
 }
 
 group = "io.github.viniciuskoiti"
-version = "0.0.1-SNAPSHOT"
+version = "1.0.0"
 
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
     }
+    withSourcesJar()
+    withJavadocJar()
 }
 
 repositories {
     mavenCentral()
+    maven {
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/ViniciusKoiti/cbenef-integration")
+        credentials {
+            username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
+            password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
+        }
+    }
 }
 
 dependencies {
@@ -30,6 +40,8 @@ dependencies {
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.7.3")
 
     compileOnly("org.springframework.boot:spring-boot-starter-cache")
 
@@ -47,15 +59,25 @@ kotlin {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
-
 publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/ViniciusKoiti/cbenef-integration")
+            credentials {
+                username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
+                password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
+            }
+        }
+    }
+
     publications {
-        create<MavenPublication>("maven") {
+        create<MavenPublication>("gpr") {  // ⚠️ MUDANÇA: Nome específico para GitHub
             from(components["java"])
 
             pom {
                 name.set("CBenef Integration Library")
-                description.set("Biblioteca para integração com dados CBenef dos estados brasileiros")
+                description.set("Biblioteca Kotlin/Spring Boot para integração com dados CBenef dos estados brasileiros")
                 url.set("https://github.com/ViniciusKoiti/cbenef-integration")
 
                 licenses {
@@ -70,6 +92,7 @@ publishing {
                         id.set("viniciuskoiti")
                         name.set("Vinícius Koiti")
                         email.set("viniciusnakahara@gmail.com")
+                        url.set("https://github.com/ViniciusKoiti")
                     }
                 }
 
@@ -82,6 +105,7 @@ publishing {
         }
     }
 }
+
 
 tasks.jar {
     enabled = true
