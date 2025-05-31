@@ -8,7 +8,6 @@ import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.mockk.*
 import com.v1.nfe.integration.cbenef.service.CBenefIntegrationService
-import io.github.viniciuskoiti.cbenefintegration.config.CBenefProperties
 import io.github.viniciuskoiti.cbenefintegration.dto.CBenefExtractionResult
 import io.github.viniciuskoiti.cbenefintegration.dto.CBenefSourceData
 import io.github.viniciuskoiti.cbenefintegration.service.CBenefCacheService

@@ -20,14 +20,12 @@ import java.time.LocalDate
 
 class SCCBenefExtractorTest : BehaviorSpec({
 
-    // Criar mocks fora do beforeEach
     lateinit var mockConfig: CBenefProperties
     lateinit var mockDownloadClient: CBenefDownloadClient
     lateinit var mockAvailabilityClient: CBenefAvailabilityClient
     lateinit var extractor: SCCBenefExtractor
 
     beforeSpec {
-        // Configuração inicial dos mocks
         mockConfig = mockk<CBenefProperties>()
         mockDownloadClient = mockk<CBenefDownloadClient>()
         mockAvailabilityClient = mockk<CBenefAvailabilityClient>()
