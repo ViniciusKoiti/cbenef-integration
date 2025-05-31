@@ -31,7 +31,7 @@ data class CBenefProperties(
 
 ) {
 
-    fun getEnabledStates(): List<String> {
+    fun  getEnabledStates(): List<String> {
         return states.filter { it.value.enabled }.keys.sorted()
     }
 

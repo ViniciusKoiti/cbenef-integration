@@ -10,8 +10,6 @@ import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.text.PDFTextStripper
 import org.springframework.stereotype.Component
 import java.io.InputStream
-
-
 import org.slf4j.LoggerFactory
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -31,6 +29,7 @@ class SCCBenefExtractor(
     companion object {
         private val logger = LoggerFactory.getLogger(SCCBenefExtractor::class.java)
     }
+
     override suspend fun getLastModified(): LocalDateTime? {
         return availabilityClient.getLastModified(stateCode)
     }
@@ -41,107 +40,249 @@ class SCCBenefExtractor(
                 val stripper = PDFTextStripper()
                 val text = stripper.getText(document)
 
+                // Log para debug
+                logger.info("Texto extraído do PDF tem ${text.length} caracteres")
+                logger.info("Primeiras 500 caracteres: ${text.take(500)}")
+
                 extractDataFromPdfText(text)
             }
         } catch (e: Exception) {
             logger.error("Erro ao processar PDF do SC", e)
-            return emptyList()
+            emptyList()
         }
     }
 
     private fun extractDataFromPdfText(text: String): List<CBenefSourceData> {
         val extractedData = mutableListOf<CBenefSourceData>()
         val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-
         val lines = text.split("\n")
 
-        val cbenefPattern = Pattern.compile(
-            """(SC\d{6})\s+(.+?)\s+(\d{2}/\d{2}/\d{4})(?:\s+(\d{2}/\d{2}/\d{4}))?""",
-            Pattern.MULTILINE
+        logger.info("Total de linhas no PDF: ${lines.size}")
+
+        val patterns = listOf(
+            Pattern.compile("""(SC\d{6})\s+(.+?)(?:\s+(\d{2}/\d{2}/\d{4}))?(?:\s+(\d{2}/\d{2}/\d{4}))?"""),
+
+            Pattern.compile("""^(SC\d{6})$"""),
+
+            Pattern.compile(""".*?(SC\d{6}).*?""")
         )
 
-        for (line in lines) {
-            if (line.contains("Tabela 5.2A") ||
-                line.contains("Página") ||
-                line.contains("Benefício") ||
-                line.contains("Tributo") ||
-                line.isBlank()) {
+        var foundCodes = 0
+        var processedLines = 0
+
+        for (i in lines.indices) {
+            val line = lines[i].trim()
+
+            if (shouldSkipLine(line)) {
                 continue
             }
 
-            val matcher = cbenefPattern.matcher(line)
-            if (matcher.find()) {
-                try {
-                    val fullCode = matcher.group(1) // SC850001, etc
-                    val code = fullCode.substring(2) // Remove "SC"
+            processedLines++
 
-                    var description = extractDescription(line)
-
-                    // Extrai datas
-                    val dateMatches = extractDates(line, dateFormatter)
-                    val startDate = dateMatches.first
-                    val endDate = dateMatches.second
-
-                    // Determina o tipo de benefício baseado no código
-                    val benefitType = determineBenefitType(description)
-
-                    extractedData.add(
-                        CBenefSourceData(
-                            stateCode = stateCode,
-                            code = code,
-                            description = description,
-                            startDate = startDate,
-                            endDate = endDate,
-                            benefitType = benefitType,
-                            sourceMetadata = mapOf(
-                                "extractionMethod" to "PDF_TABLE_EXTRACTION",
-                                "sourceUrl" to sourceUrl,
-                                "documentType" to "PDF_STRUCTURED",
-                                "fullCode" to fullCode
-                            )
+            for (pattern in patterns) {
+                val matcher = pattern.matcher(line)
+                if (matcher.find()) {
+                    try {
+                        val extractedBenefit = extractBenefitFromMatch(
+                            matcher,
+                            line,
+                            lines,
+                            i,
+                            dateFormatter
                         )
-                    )
-                } catch (e: Exception) {
-                    logger.warn("Falha ao processar linha SC: '${line.take(100)}'", e)
+
+                        if (extractedBenefit != null) {
+                            extractedData.add(extractedBenefit)
+                            foundCodes++
+                            logger.debug("Código encontrado: ${extractedBenefit.getFullCode()} - ${extractedBenefit.description}")
+                        }
+                        break // Para no primeiro match
+                    } catch (e: Exception) {
+                        logger.warn("Erro ao processar linha ${i}: '${line.take(100)}'", e)
+                    }
                 }
             }
         }
 
-        return extractedData
+        logger.info("Processadas $processedLines linhas, encontrados $foundCodes códigos CBenef")
+
+        if (foundCodes < 10) {
+            logger.warn("Poucos códigos encontrados! Possível problema na extração.")
+            logger.info("Amostra de linhas processadas:")
+            lines.take(20).forEachIndexed { index, line ->
+                if (!shouldSkipLine(line)) {
+                    logger.info("Linha $index: '$line'")
+                }
+            }
+        }
+
+        return extractedData.distinctBy { it.getFullCode() } // Remove duplicatas
     }
 
-    private fun extractDescription(line: String): String {
-        var description = line
-            .replace(Regex("SC\\d{6}"), "") // Remove código SC
+    private fun shouldSkipLine(line: String): Boolean {
+        val trimmedLine = line.trim()
+
+        return trimmedLine.isEmpty() ||
+                trimmedLine.length < 5 ||
+                trimmedLine.startsWith("Página") ||
+                trimmedLine.startsWith("Tabela") ||
+                trimmedLine.matches(Regex("^\\d+$")) || // Apenas números
+                trimmedLine.matches(Regex("^[\\s\\-_=]+$")) || // Apenas separadores
+                trimmedLine.contains("SECRETARIA") ||
+                trimmedLine.contains("FAZENDA") ||
+                trimmedLine.contains("GOVERNO")
+    }
+
+    private fun extractBenefitFromMatch(
+        matcher: java.util.regex.Matcher,
+        currentLine: String,
+        allLines: List<String>,
+        lineIndex: Int,
+        dateFormatter: DateTimeFormatter
+    ): CBenefSourceData? {
+
+        val fullCode = matcher.group(1) ?: return null
+        val code = fullCode.substring(2) // Remove "SC"
+
+        var description = extractDescriptionFromLines(currentLine, allLines, lineIndex, fullCode)
+
+        if (description.length < 10) {
+            description = findDescriptionInNextLines(allLines, lineIndex, fullCode)
+        }
+
+        val (startDate, endDate) = extractDatesFromContext(currentLine, allLines, lineIndex, dateFormatter)
+
+        val benefitType = determineBenefitType(description)
+
+        return CBenefSourceData(
+            stateCode = stateCode,
+            code = code,
+            description = description.ifBlank { "Benefício fiscal ICMS - SC$code" },
+            startDate = startDate,
+            endDate = endDate,
+            benefitType = benefitType,
+            sourceMetadata = mapOf(
+                "extractionMethod" to "PDF_ENHANCED_EXTRACTION",
+                "sourceUrl" to sourceUrl,
+                "documentType" to "PDF_STRUCTURED",
+                "fullCode" to fullCode,
+                "lineIndex" to lineIndex.toString()
+            )
+        )
+    }
+
+    private fun extractDescriptionFromLines(
+        currentLine: String,
+        allLines: List<String>,
+        lineIndex: Int,
+        fullCode: String
+    ): String {
+        var description = currentLine
+            .replace(fullCode, "") // Remove código
             .replace(Regex("\\d{2}/\\d{2}/\\d{4}"), "") // Remove datas
-            .replace(Regex("RICMS/SC-\\d+.*?Art\\. \\d+.*?SC\\d{6}"), "") // Remove referências legais
+            .replace(Regex("RICMS/SC-\\d+.*"), "") // Remove referências legais
+            .replace(Regex("Art\\.\\s*\\d+.*"), "") // Remove artigos
             .replace(Regex("\\s+"), " ") // Normaliza espaços
             .trim()
 
-        val words = description.split(" ")
-        description = words.take(15).joinToString(" ") // Limita a 15 palavras
+        // Se descrição muito curta, busca contexto nas linhas adjacentes
+        if (description.length < 20) {
+            val contextLines = mutableListOf<String>()
 
-        return if (description.length > 5) description else "Benefício fiscal ICMS"
+            // Linha anterior
+            if (lineIndex > 0) {
+                contextLines.add(allLines[lineIndex - 1])
+            }
+
+            // Próximas 2 linhas
+            for (i in 1..2) {
+                if (lineIndex + i < allLines.size) {
+                    val nextLine = allLines[lineIndex + i].trim()
+                    if (nextLine.isNotEmpty() && !nextLine.startsWith("SC") && !shouldSkipLine(nextLine)) {
+                        contextLines.add(nextLine)
+                    }
+                }
+            }
+
+            if (contextLines.isNotEmpty()) {
+                description = contextLines.joinToString(" ")
+                    .replace(Regex("\\d{2}/\\d{2}/\\d{4}"), "")
+                    .replace(Regex("\\s+"), " ")
+                    .trim()
+            }
+        }
+
+        // Limita tamanho da descrição
+        val words = description.split(" ").filter { it.isNotBlank() }
+        description = words.take(15).joinToString(" ")
+
+        return if (description.length > 5) description else ""
     }
 
-    private fun extractDates(line: String, formatter: DateTimeFormatter): Pair<LocalDate, LocalDate?> {
-        val datePattern = Pattern.compile("(\\d{2}/\\d{2}/\\d{4})")
-        val matcher = datePattern.matcher(line)
+    private fun findDescriptionInNextLines(
+        allLines: List<String>,
+        startIndex: Int,
+        fullCode: String
+    ): String {
+        val contextLines = mutableListOf<String>()
 
+        for (i in (startIndex + 1) until minOf(startIndex + 5, allLines.size)) {
+            val line = allLines[i].trim()
+            if (line.isNotEmpty() &&
+                !line.startsWith("SC") &&
+                !shouldSkipLine(line) &&
+                !line.matches(Regex("\\d{2}/\\d{2}/\\d{4}"))) {
+                contextLines.add(line)
+            }
+        }
+
+        return contextLines.joinToString(" ")
+            .replace(Regex("\\s+"), " ")
+            .trim()
+            .take(200) // Limita tamanho
+    }
+
+    private fun extractDatesFromContext(
+        currentLine: String,
+        allLines: List<String>,
+        lineIndex: Int,
+        formatter: DateTimeFormatter
+    ): Pair<LocalDate, LocalDate?> {
+
+        val datePattern = Pattern.compile("(\\d{2}/\\d{2}/\\d{4})")
         val dates = mutableListOf<String>()
-        while (matcher.find()) {
-            dates.add(matcher.group(1))
+
+        val currentMatcher = datePattern.matcher(currentLine)
+        while (currentMatcher.find()) {
+            dates.add(currentMatcher.group(1))
+        }
+
+        if (dates.isEmpty()) {
+            for (i in 1..3) {
+                if (lineIndex + i < allLines.size) {
+                    val nextMatcher = datePattern.matcher(allLines[lineIndex + i])
+                    while (nextMatcher.find()) {
+                        dates.add(nextMatcher.group(1))
+                    }
+                    if (dates.isNotEmpty()) break
+                }
+            }
         }
 
         val startDate = if (dates.isNotEmpty()) {
-            LocalDate.parse(dates.last(), formatter) // Última data como início
+            try {
+                // Usa a PRIMEIRA data como início (não a última)
+                LocalDate.parse(dates.first(), formatter)
+            } catch (e: Exception) {
+                LocalDate.of(2023, 1, 1) // Data padrão mais conservadora
+            }
         } else {
-            LocalDate.of(2023, 5, 1) // Data padrão se não encontrar
+            LocalDate.of(2023, 1, 1)
         }
 
-        val endDate = if (dates.size > 1 && dates[dates.size - 2] != dates.last()) {
+        val endDate = if (dates.size > 1) {
             try {
-                LocalDate.parse(dates[dates.size - 2], formatter)
+                LocalDate.parse(dates.last(), formatter)
             } catch (e: Exception) {
                 null
             }
@@ -152,7 +293,7 @@ class SCCBenefExtractor(
         return Pair(startDate, endDate)
     }
 
-    private fun determineBenefitType(description: String): CBenefBenefitType? {
+    private fun determineBenefitType(description: String): CBenefBenefitType {
         return when {
             description.contains("Isenção", ignoreCase = true) -> CBenefBenefitType.ISENCAO
             description.contains("Não Incidência", ignoreCase = true) -> CBenefBenefitType.NAO_INCIDENCIA
