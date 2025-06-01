@@ -55,7 +55,7 @@ dependencies {
     // Testes de integração
     testImplementation("org.testcontainers:junit-jupiter:1.19.3")
     testImplementation("org.testcontainers:mockserver:1.19.3")
-    testImplementation("com.github.tomakehurst:wiremock-jre8:2.35.0")
+    testImplementation("com.github.tomakehurst:wiremock-jre8:2.35.1")
 
     // Coroutines Testing
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
@@ -72,15 +72,34 @@ kotlin {
 tasks.withType<Test> {
     useJUnitPlatform()
 
-    // Configuração específica para Kotest
-    systemProperty("kotest.framework.classpath.scanning.config.disable", "false")
+    jvmArgs(
+        "-XX:+EnableDynamicAgentLoading",
+        "-Djdk.instrument.traceUsage=false",
+        "--add-opens=java.base/java.lang=ALL-UNNAMED",
+        "--add-opens=java.base/java.util=ALL-UNNAMED",
+        "-XX:+TieredCompilation",
+        "-XX:TieredStopAtLevel=1"
+    )
 
-    // Para logs detalhados durante desenvolvimento
+    systemProperty("kotest.framework.classpath.scanning.config.disable", "false")
+    systemProperty("kotest.framework.test.error.collectors.enabled", "false")
+    systemProperty("kotest.framework.dump.config", "false")
+    systemProperty("kotest.framework.test.severity", "MINOR")
+
+    systemProperty("mockk.verbose", "false")
+    systemProperty("mockk.relaxed", "true")
+
     testLogging {
         events("passed", "skipped", "failed")
         exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
-        showStandardStreams = true
+        showStandardStreams = project.hasProperty("ci").not()
+        showExceptions = true
+        showCauses = true
+        showStackTraces = project.hasProperty("ci").not()
     }
+
+    maxHeapSize = "1g"
+    minHeapSize = "512m"
 }
 
 // =================== PUBLISHING ===================
