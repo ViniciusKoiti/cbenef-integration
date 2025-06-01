@@ -1,4 +1,4 @@
-package com.v1.nfe.integration.cbenef.service
+package io.github.viniciuskoiti.cbenefintegration.service
 
 import io.github.viniciuskoiti.cbenefintegration.core.factory.CBenefExtractorFactory
 import io.github.viniciuskoiti.cbenefintegration.dto.CBenefExtractionResult

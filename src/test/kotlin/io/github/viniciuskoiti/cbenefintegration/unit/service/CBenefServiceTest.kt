@@ -1,7 +1,7 @@
 package io.github.viniciuskoiti.cbenefintegration.unit.service
 
-import com.v1.nfe.integration.cbenef.service.CBenefIntegrationService
-import com.v1.nfe.integration.cbenef.service.CBenefService
+import io.github.viniciuskoiti.cbenefintegration.service.CBenefIntegrationService
+import io.github.viniciuskoiti.cbenefintegration.service.CBenefService
 import io.github.viniciuskoiti.cbenefintegration.config.CBenefProperties
 import io.github.viniciuskoiti.cbenefintegration.dto.CBenefExtractionResult
 import io.github.viniciuskoiti.cbenefintegration.dto.CBenefSourceData
@@ -16,12 +16,9 @@ import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
-import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import kotlinx.coroutines.test.runTest
 import java.time.LocalDate
 
 class CBenefServiceTest : BehaviorSpec({

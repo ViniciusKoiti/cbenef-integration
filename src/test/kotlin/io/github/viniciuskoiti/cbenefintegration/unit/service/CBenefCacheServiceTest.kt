@@ -1,6 +1,6 @@
 package io.github.viniciuskoiti.cbenefintegration.unit.service
 
-import com.v1.nfe.integration.cbenef.service.CBenefIntegrationService
+import io.github.viniciuskoiti.cbenefintegration.service.CBenefIntegrationService
 import io.github.viniciuskoiti.cbenefintegration.config.CBenefProperties
 import io.github.viniciuskoiti.cbenefintegration.dto.CBenefExtractionResult
 import io.github.viniciuskoiti.cbenefintegration.dto.CBenefSourceData
@@ -18,8 +18,8 @@ import java.time.LocalDate
 class CBenefCacheServiceTest : BehaviorSpec({
 
     var mockIntegrationService: CBenefIntegrationService? = null
-    var mockProperties: CBenefProperties? = null
-    var mockCacheProperties: CacheProperties? = null
+    var mockProperties: CBenefProperties?
+    var mockCacheProperties: CacheProperties?
     var cBenefCacheService: CBenefCacheService? = null
 
     val sampleBenefitsSC = listOf(
@@ -36,7 +36,6 @@ class CBenefCacheServiceTest : BehaviorSpec({
     )
 
     beforeEach {
-        // ✅ Criar mocks na ordem correta, sempre
         mockCacheProperties = mockk(relaxed = true) {
             every { getTtlForState(any()) } returns 1440L
         }

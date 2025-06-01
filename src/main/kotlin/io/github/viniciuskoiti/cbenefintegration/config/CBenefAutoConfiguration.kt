@@ -6,9 +6,9 @@ import io.github.viniciuskoiti.cbenefintegration.client.CBenefDownloadClient
 import io.github.viniciuskoiti.cbenefintegration.client.CBenefHttpClient
 import io.github.viniciuskoiti.cbenefintegration.core.factory.CBenefExtractorFactory
 import io.github.viniciuskoiti.cbenefintegration.service.CBenefCacheService
-import com.v1.nfe.integration.cbenef.service.CBenefIntegrationService
+import io.github.viniciuskoiti.cbenefintegration.service.CBenefIntegrationService
 import io.github.viniciuskoiti.cbenefintegration.service.CBenefSearchService
-import com.v1.nfe.integration.cbenef.service.CBenefService
+import io.github.viniciuskoiti.cbenefintegration.service.CBenefService
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.EnableConfigurationProperties

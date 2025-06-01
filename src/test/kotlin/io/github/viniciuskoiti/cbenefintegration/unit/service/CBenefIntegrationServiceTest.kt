@@ -7,7 +7,7 @@ import io.github.viniciuskoiti.cbenefintegration.dto.CBenefSourceData
 import io.github.viniciuskoiti.cbenefintegration.enums.DocumentFormat
 import io.github.viniciuskoiti.cbenefintegration.enums.ExtractionStatus
 import io.github.viniciuskoiti.cbenefintegration.exception.CBenefExtractionException
-import com.v1.nfe.integration.cbenef.service.CBenefIntegrationService
+import io.github.viniciuskoiti.cbenefintegration.service.CBenefIntegrationService
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldHaveSize
@@ -17,17 +17,15 @@ import io.kotest.matchers.maps.shouldHaveSize
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNot
 import io.kotest.matchers.string.shouldContain
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 class CBenefIntegrationServiceTest : BehaviorSpec({
 
-    var mockExtractorFactory: CBenefExtractorFactory? = null
+    var mockExtractorFactory: CBenefExtractorFactory?
     var mockExtractorSC: CBenefExtractor? = null
     var mockExtractorES: CBenefExtractor? = null
     var integrationService: CBenefIntegrationService? = null
