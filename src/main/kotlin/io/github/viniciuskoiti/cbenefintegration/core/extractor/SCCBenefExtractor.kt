@@ -40,9 +40,7 @@ class SCCBenefExtractor(
                 val stripper = PDFTextStripper()
                 val text = stripper.getText(document)
 
-                // Log para debug
                 logger.info("Texto extraído do PDF tem ${text.length} caracteres")
-                logger.info("Primeiras 500 caracteres: ${text.take(500)}")
 
                 extractDataFromPdfText(text)
             }
