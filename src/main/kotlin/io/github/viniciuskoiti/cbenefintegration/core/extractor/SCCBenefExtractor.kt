@@ -34,15 +34,13 @@ class SCCBenefExtractor(
         return availabilityClient.getLastModified(stateCode)
     }
 
-    override fun extractFromDocument(inputStream: InputStream): List<CBenefSourceData> {
+    public override fun extractFromDocument(inputStream: InputStream): List<CBenefSourceData> {
         return try {
             PDDocument.load(inputStream).use { document ->
                 val stripper = PDFTextStripper()
                 val text = stripper.getText(document)
 
-                // Log para debug
                 logger.info("Texto extraído do PDF tem ${text.length} caracteres")
-                logger.info("Primeiras 500 caracteres: ${text.take(500)}")
 
                 extractDataFromPdfText(text)
             }

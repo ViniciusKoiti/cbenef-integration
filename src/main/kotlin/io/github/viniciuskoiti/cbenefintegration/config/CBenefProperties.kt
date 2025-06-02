@@ -64,7 +64,7 @@ data class CBenefProperties(
     }
 
     fun isCacheEnabled(): Boolean{
-        return cache.enabled;
+        return cache.enabled
     }
 
     companion object {
@@ -90,9 +90,9 @@ data class CBenefProperties(
                     )
                 ),
                 "RJ" to StateConfig(
-                    enabled = false, // Desabilitado por padrão
+                    enabled = true,
                     priority = 3,
-                    sourceUrl = "https://portal.fazenda.rj.gov.br/dfe/wp-content/uploads/sites/17/2023/10/Tabela-codigo-de-beneficio-X-CST_versao_2025-01-15.pdf",
+                    sourceUrl = "https://portal.fazenda.rj.gov.br/dfe/wp-content/uploads/sites/17/2023/10/Tabela-codigo-de-beneficio-X-CST.pdf",
                     customTimeout = 60000,
                     customReadTimeout = 120000,
                     customMaxRetries = 5,

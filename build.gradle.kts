@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "io.github.viniciuskoiti"
-version = "1.0.0"
+version = "1.1.0-SNAPSHOT"
 
 java {
     toolchain {
@@ -31,13 +31,13 @@ repositories {
 }
 
 dependencies {
+    // =================== DEPENDÊNCIAS PRINCIPAIS ===================
     api("org.springframework.boot:spring-boot-starter-web")
-    api("org.springframework.boot:spring-boot-starter-validation")  // Para @Min, @Max
+    api("org.springframework.boot:spring-boot-starter-validation")
 
     kapt("org.springframework.boot:spring-boot-configuration-processor")
 
     implementation("org.apache.pdfbox:pdfbox:2.0.27")
-
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
@@ -47,6 +47,18 @@ dependencies {
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    testImplementation("io.mockk:mockk:1.13.8")
+    testImplementation("io.kotest:kotest-runner-junit5:5.8.0")
+    testImplementation("io.kotest:kotest-assertions-core:5.8.0")
+    testImplementation("io.kotest:kotest-property:5.8.0")
+
+    // Testes de integração
+    testImplementation("org.testcontainers:junit-jupiter:1.19.3")
+    testImplementation("org.testcontainers:mockserver:1.19.3")
+    testImplementation("com.github.tomakehurst:wiremock-jre8:2.35.1")
+
+    // Coroutines Testing
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
@@ -56,9 +68,41 @@ kotlin {
     }
 }
 
+// =================== CONFIGURAÇÃO DE TESTES ===================
 tasks.withType<Test> {
     useJUnitPlatform()
+
+    jvmArgs(
+        "-XX:+EnableDynamicAgentLoading",
+        "-Djdk.instrument.traceUsage=false",
+        "--add-opens=java.base/java.lang=ALL-UNNAMED",
+        "--add-opens=java.base/java.util=ALL-UNNAMED",
+        "-XX:+TieredCompilation",
+        "-XX:TieredStopAtLevel=1"
+    )
+
+    systemProperty("kotest.framework.classpath.scanning.config.disable", "false")
+    systemProperty("kotest.framework.test.error.collectors.enabled", "false")
+    systemProperty("kotest.framework.dump.config", "false")
+    systemProperty("kotest.framework.test.severity", "MINOR")
+
+    systemProperty("mockk.verbose", "false")
+    systemProperty("mockk.relaxed", "true")
+
+    testLogging {
+        events("passed", "skipped", "failed")
+        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+        showStandardStreams = project.hasProperty("ci").not()
+        showExceptions = true
+        showCauses = true
+        showStackTraces = project.hasProperty("ci").not()
+    }
+
+    maxHeapSize = "1g"
+    minHeapSize = "512m"
 }
+
+// =================== PUBLISHING ===================
 publishing {
     repositories {
         maven {
@@ -72,7 +116,7 @@ publishing {
     }
 
     publications {
-        create<MavenPublication>("gpr") {  // ⚠️ MUDANÇA: Nome específico para GitHub
+        create<MavenPublication>("gpr") {
             from(components["java"])
 
             pom {
@@ -105,7 +149,6 @@ publishing {
         }
     }
 }
-
 
 tasks.jar {
     enabled = true
