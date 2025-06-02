@@ -64,7 +64,7 @@ data class CBenefProperties(
     }
 
     fun isCacheEnabled(): Boolean{
-        return cache.enabled;
+        return cache.enabled
     }
 
     companion object {
