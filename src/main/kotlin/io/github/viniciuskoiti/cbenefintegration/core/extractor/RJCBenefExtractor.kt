@@ -40,7 +40,7 @@ class RJCBenefExtractor(
                 val stripper = PDFTextStripper()
                 val text = stripper.getText(document)
 
-                logger.debug("Extraindo dados do PDF RJ - ${text.length} caracteres")
+                logger.info("Extraindo dados do PDF RJ - ${text.length} caracteres")
                 extractDataFromPdfText(text)
             }
         } catch (e: Exception) {
@@ -54,18 +54,15 @@ class RJCBenefExtractor(
         val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
         val lines = text.split("\n")
 
-        logger.debug("Total de linhas no PDF RJ: ${lines.size}")
+        logger.info("Total de linhas no PDF RJ: ${lines.size}")
 
-        // Padrões específicos para o RJ - baseado na estrutura tabular código x CST
-        val patterns = listOf(
-            // Padrão principal: RJ + 6 dígitos seguido de CSTs em colunas
-            Pattern.compile("""^(RJ\d{6})\s+.*?\s+(.+?)\s+(.+?)$"""),
+        // Padrões baseados na estrutura real do documento RJ
+        val mainPattern = Pattern.compile(
+            """^(RJ\d{6})\s+(SIM)?\s*(SIM)?\s*(\d{2}/\d{2}/\d{4})(?:\s+(\d{2}/\d{2}/\d{4}))?\s+(.+)$"""
+        )
 
-            // Padrão para códigos isolados
-            Pattern.compile("""^(RJ\d{6})\s*$"""),
-
-            // Padrão mais flexível
-            Pattern.compile(""".*?(RJ\d{6}).*?""")
+        val fallbackPattern = Pattern.compile(
+            """^(RJ\d{6})\s+(.+)$"""
         )
 
         var foundCodes = 0
@@ -80,83 +77,75 @@ class RJCBenefExtractor(
 
             processedLines++
 
-            // Tenta extrair dados usando estrutura específica do RJ
-            val benefit = extractBenefitFromRJTableLine(line, lines, i, dateFormatter)
-            if (benefit != null) {
-                extractedData.add(benefit)
-                foundCodes++
-                continue
+            // Tenta primeiro o padrão principal (estrutura completa)
+            val mainMatcher = mainPattern.matcher(line)
+            if (mainMatcher.find()) {
+                try {
+                    val benefit = extractFromMainPattern(mainMatcher, line, dateFormatter)
+                    if (benefit != null) {
+                        extractedData.add(benefit)
+                        foundCodes++
+                        logger.debug("Código RJ encontrado (main): ${benefit.getFullCode()} - ${benefit.description}")
+                        continue
+                    }
+                } catch (e: Exception) {
+                    logger.warn("Erro ao processar linha RJ ${i} (main): '${line.take(100)}'", e)
+                }
             }
 
-            // Fallback para padrões gerais
-            for (pattern in patterns) {
-                val matcher = pattern.matcher(line)
-                if (matcher.find()) {
-                    try {
-                        val extractedBenefit = extractBenefitFromMatch(
-                            matcher,
-                            line,
-                            lines,
-                            i,
-                            dateFormatter
-                        )
-
-                        if (extractedBenefit != null) {
-                            extractedData.add(extractedBenefit)
-                            foundCodes++
-                        }
-                        break
-                    } catch (e: Exception) {
-                        logger.warn("Erro ao processar linha RJ ${i}: '${line.take(100)}'", e)
+            // Fallback para linhas que não seguem o padrão completo
+            val fallbackMatcher = fallbackPattern.matcher(line)
+            if (fallbackMatcher.find()) {
+                try {
+                    val benefit = extractFromFallbackPattern(
+                        fallbackMatcher,
+                        lines,
+                        i,
+                        dateFormatter
+                    )
+                    if (benefit != null) {
+                        extractedData.add(benefit)
+                        foundCodes++
+                        logger.debug("Código RJ encontrado (fallback): ${benefit.getFullCode()} - ${benefit.description}")
                     }
+                } catch (e: Exception) {
+                    logger.warn("Erro ao processar linha RJ ${i} (fallback): '${line.take(100)}'", e)
                 }
             }
         }
 
-        logger.debug("RJ - Linhas processadas: $processedLines, códigos encontrados: $foundCodes")
+        logger.info("RJ - Linhas processadas: $processedLines, códigos encontrados: $foundCodes")
 
-        if (foundCodes < 5) {
+        if (foundCodes < 10) {
             logger.warn("Poucos códigos RJ encontrados ($foundCodes). Verificar formato do documento.")
+            logSampleLines(lines)
         }
 
         return extractedData.distinctBy { it.getFullCode() }
     }
 
-    private fun extractBenefitFromRJTableLine(
+    private fun extractFromMainPattern(
+        matcher: java.util.regex.Matcher,
         line: String,
-        allLines: List<String>,
-        lineIndex: Int,
         dateFormatter: DateTimeFormatter
     ): CBenefSourceData? {
-
-        // Padrão específico para tabela RJ - código seguido de CSTs e descrição
-        val rjTablePattern = Pattern.compile(
-            """^(RJ\d{6})\s+([X\s]+)\s+([X\s]+)\s+([X\s]+)\s+([X\s]+)\s+([X\s]+)\s+([X\s]+)\s+([X\s]+)\s+(.+)$"""
-        )
-
-        val matcher = rjTablePattern.matcher(line)
-        if (!matcher.find()) return null
 
         val fullCode = matcher.group(1) ?: return null
         val code = fullCode.substring(2) // Remove "RJ"
 
-        // Extrai quais CSTs são aplicáveis (baseado nas marcações X)
+        // Extrai CSTs aplicáveis baseado nos grupos "SIM"
         val applicableCSTs = mutableListOf<String>()
-        val cstColumns = listOf("00", "10", "20", "30", "40", "41", "50", "51", "60", "70", "90")
+        if (matcher.group(2) == "SIM") applicableCSTs.add("00") // CST 00
+        if (matcher.group(3) == "SIM") applicableCSTs.add("10") // CST 10
+        // Adicionar mais CSTs conforme mapeamento real das colunas
 
-        for (i in 2..8) { // Grupos 2-8 correspondem às colunas CST
-            val cstValue = matcher.group(i)?.trim()
-            if (!cstValue.isNullOrBlank() && cstValue.contains("X")) {
-                applicableCSTs.add(cstColumns.getOrNull(i - 2) ?: "")
-            }
-        }
+        // Extrai datas
+        val startDateStr = matcher.group(4)
+        val endDateStr = matcher.group(5) // Pode ser null
+        val description = matcher.group(6)?.trim() ?: ""
 
-        val description = matcher.group(9)?.trim() ?: ""
-
-        // Busca informações adicionais nas linhas adjacentes
-        val (startDate, endDate, legalBasis) = extractAdditionalInfo(allLines, lineIndex, fullCode, dateFormatter)
-
-        val benefitType = determineBenefitType(description, legalBasis)
+        val (startDate, endDate) = parseDates(startDateStr, endDateStr, dateFormatter)
+        val benefitType = determineBenefitType(description)
 
         return CBenefSourceData(
             stateCode = stateCode,
@@ -168,20 +157,18 @@ class RJCBenefExtractor(
             applicableCSTs = applicableCSTs,
             cstSpecific = applicableCSTs.isNotEmpty(),
             sourceMetadata = mapOf(
-                "extractionMethod" to "PDF_RJ_TABLE_EXTRACTION",
+                "extractionMethod" to "PDF_RJ_MAIN_PATTERN",
                 "sourceUrl" to sourceUrl,
-                "documentType" to "PDF_CST_TABLE",
+                "documentType" to "PDF_RJ_TABLE",
                 "fullCode" to fullCode,
-                "legalBasis" to legalBasis,
                 "applicableCSTs" to applicableCSTs.joinToString(","),
-                "lineIndex" to lineIndex.toString()
+                "originalLine" to line
             )
         )
     }
 
-    private fun extractBenefitFromMatch(
+    private fun extractFromFallbackPattern(
         matcher: java.util.regex.Matcher,
-        currentLine: String,
         allLines: List<String>,
         lineIndex: Int,
         dateFormatter: DateTimeFormatter
@@ -189,10 +176,15 @@ class RJCBenefExtractor(
 
         val fullCode = matcher.group(1) ?: return null
         val code = fullCode.substring(2) // Remove "RJ"
+        val description = matcher.group(2)?.trim() ?: ""
 
-        val description = findDescriptionInContext(allLines, lineIndex, fullCode)
-        val (startDate, endDate, legalBasis) = extractAdditionalInfo(allLines, lineIndex, fullCode, dateFormatter)
-        val benefitType = determineBenefitType(description, legalBasis)
+        // Busca datas nas linhas adjacentes
+        val (startDate, endDate) = extractDatesFromContext(allLines, lineIndex, dateFormatter)
+
+        // Busca informações de CST no contexto (se disponível)
+        val applicableCSTs = extractCSTsFromContext(allLines, lineIndex)
+
+        val benefitType = determineBenefitType(description)
 
         return CBenefSourceData(
             stateCode = stateCode,
@@ -201,119 +193,111 @@ class RJCBenefExtractor(
             startDate = startDate,
             endDate = endDate,
             benefitType = benefitType,
+            applicableCSTs = applicableCSTs,
+            cstSpecific = applicableCSTs.isNotEmpty(),
             sourceMetadata = mapOf(
-                "extractionMethod" to "PDF_RJ_FALLBACK_EXTRACTION",
+                "extractionMethod" to "PDF_RJ_FALLBACK_PATTERN",
                 "sourceUrl" to sourceUrl,
-                "documentType" to "PDF_STRUCTURED",
+                "documentType" to "PDF_RJ_FALLBACK",
                 "fullCode" to fullCode,
-                "legalBasis" to legalBasis,
+                "applicableCSTs" to applicableCSTs.joinToString(","),
                 "lineIndex" to lineIndex.toString()
             )
         )
     }
 
-    private fun extractAdditionalInfo(
-        allLines: List<String>,
-        startIndex: Int,
-        fullCode: String,
-        dateFormatter: DateTimeFormatter
-    ): Triple<LocalDate, LocalDate?, String> {
+    private fun parseDates(
+        startDateStr: String?,
+        endDateStr: String?,
+        formatter: DateTimeFormatter
+    ): Pair<LocalDate, LocalDate?> {
 
-        val datePattern = Pattern.compile("(\\d{2}/\\d{2}/\\d{4})")
-        val dates = mutableListOf<String>()
-        var legalBasis = ""
-
-        // Busca informações na linha atual e adjacentes
-        for (i in startIndex until minOf(startIndex + 3, allLines.size)) {
-            val line = allLines[i]
-
-            // Busca datas
-            val dateMatcher = datePattern.matcher(line)
-            while (dateMatcher.find()) {
-                dates.add(dateMatcher.group(1))
-            }
-
-            // Busca base legal (Convênio, Lei, Decreto, etc.)
-            if (line.contains("Convênio", ignoreCase = true) ||
-                line.contains("Lei", ignoreCase = true) ||
-                line.contains("Decreto", ignoreCase = true) ||
-                line.contains("Art", ignoreCase = true)) {
-                legalBasis = line.trim().take(100)
-            }
-        }
-
-        val startDate = if (dates.isNotEmpty()) {
+        val startDate = if (!startDateStr.isNullOrBlank()) {
             try {
-                LocalDate.parse(dates.first(), dateFormatter)
+                LocalDate.parse(startDateStr, formatter)
             } catch (e: Exception) {
-                LocalDate.of(2019, 9, 2) // Data padrão RJ (obrigatório desde 02/09/2019)
+                logger.warn("Erro ao parsear data de início '$startDateStr'", e)
+                LocalDate.of(2019, 4, 1) // Data padrão RJ
             }
         } else {
-            LocalDate.of(2019, 9, 2)
+            LocalDate.of(2019, 4, 1)
         }
 
-        val endDate = if (dates.size > 1) {
+        val endDate = if (!endDateStr.isNullOrBlank()) {
             try {
-                LocalDate.parse(dates.last(), dateFormatter)
+                val parsed = LocalDate.parse(endDateStr, formatter)
+                // Valida se data fim é posterior à data início
+                if (parsed.isAfter(startDate)) parsed else null
             } catch (e: Exception) {
+                logger.warn("Erro ao parsear data fim '$endDateStr'", e)
                 null
             }
         } else {
-            null
+            null // Sem data fim = ativo indefinidamente
         }
 
-        return Triple(startDate, endDate, legalBasis)
+        return Pair(startDate, endDate)
     }
 
-    private fun findDescriptionInContext(
+    private fun extractDatesFromContext(
         allLines: List<String>,
         startIndex: Int,
-        fullCode: String
-    ): String {
-        val contextLines = mutableListOf<String>()
+        formatter: DateTimeFormatter
+    ): Pair<LocalDate, LocalDate?> {
 
-        // Verifica a linha atual
-        val currentLine = allLines.getOrNull(startIndex)?.trim() ?: ""
-        if (currentLine.contains(fullCode)) {
-            val afterCode = currentLine.substringAfter(fullCode).trim()
-            if (afterCode.isNotBlank()) {
-                contextLines.add(afterCode)
+        val datePattern = Pattern.compile("(\\d{2}/\\d{2}/\\d{4})")
+        val dates = mutableListOf<String>()
+
+        // Busca datas na linha atual e próximas 2 linhas
+        for (i in startIndex until minOf(startIndex + 3, allLines.size)) {
+            val line = allLines[i]
+            val matcher = datePattern.matcher(line)
+            while (matcher.find()) {
+                dates.add(matcher.group(1))
             }
         }
 
-        // Busca nas próximas linhas se necessário
-        if (contextLines.isEmpty() || contextLines.joinToString(" ").length < 20) {
-            for (i in (startIndex + 1) until minOf(startIndex + 4, allLines.size)) {
-                val line = allLines[i].trim()
-                if (line.isNotEmpty() &&
-                    !line.startsWith("RJ") &&
-                    !shouldSkipLine(line) &&
-                    !line.matches(Regex("\\d{2}/\\d{2}/\\d{4}"))) {
-                    contextLines.add(line)
-                    if (contextLines.joinToString(" ").length > 50) break
+        return if (dates.isNotEmpty()) {
+            parseDates(dates.first(), dates.getOrNull(1), formatter)
+        } else {
+            Pair(LocalDate.of(2019, 4, 1), null)
+        }
+    }
+
+    private fun extractCSTsFromContext(
+        allLines: List<String>,
+        startIndex: Int
+    ): List<String> {
+
+        val applicableCSTs = mutableListOf<String>()
+
+        for (i in (startIndex - 1)..(startIndex + 1)) {
+            if (i >= 0 && i < allLines.size) {
+                val line = allLines[i]
+                if (line.contains("SIM")) {
+                    if (!applicableCSTs.contains("00")) applicableCSTs.add("00")
+                    if (!applicableCSTs.contains("10")) applicableCSTs.add("10")
                 }
             }
         }
 
-        return contextLines.joinToString(" ")
-            .replace(Regex("\\d{2}/\\d{2}/\\d{4}"), "") // Remove datas
-            .replace(Regex("(Convênio|Lei|Decreto|Art\\.).*"), "") // Remove dados legais
-            .replace(Regex("\\s+"), " ")
-            .trim()
-            .take(200)
+        return applicableCSTs
     }
 
-    private fun determineBenefitType(description: String, legalBasis: String): CBenefBenefitType {
-        val fullText = "$description $legalBasis".lowercase()
+    private fun determineBenefitType(description: String): CBenefBenefitType {
+        val lowerDesc = description.lowercase()
 
         return when {
-            fullText.contains("isenção") || fullText.contains("isent") -> CBenefBenefitType.ISENCAO
-            fullText.contains("não incidência") || fullText.contains("não tributad") -> CBenefBenefitType.NAO_INCIDENCIA
-            fullText.contains("redução") || fullText.contains("reduz") -> CBenefBenefitType.REDUCAO_BASE
-            fullText.contains("diferimento") || fullText.contains("diferir") -> CBenefBenefitType.DIFERIMENTO
-            fullText.contains("suspensão") || fullText.contains("suspend") -> CBenefBenefitType.SUSPENSAO
-            fullText.contains("crédito") -> CBenefBenefitType.CREDITO_OUTORGADO
-            fullText.contains("alíquota zero") || fullText.contains("zero") -> CBenefBenefitType.ALIQUOTA_ZERO
+            lowerDesc.contains("isenção") || lowerDesc.contains("isent") -> CBenefBenefitType.ISENCAO
+            lowerDesc.contains("não incidência") || lowerDesc.contains("não tributad") -> CBenefBenefitType.NAO_INCIDENCIA
+            lowerDesc.contains("redução") || lowerDesc.contains("reduz") -> CBenefBenefitType.REDUCAO_BASE
+            lowerDesc.contains("diferimento") || lowerDesc.contains("diferir") -> CBenefBenefitType.DIFERIMENTO
+            lowerDesc.contains("suspensão") || lowerDesc.contains("suspend") -> CBenefBenefitType.SUSPENSAO
+            lowerDesc.contains("crédito") -> CBenefBenefitType.CREDITO_OUTORGADO
+            lowerDesc.contains("alíquota zero") || lowerDesc.contains("zero") -> CBenefBenefitType.ALIQUOTA_ZERO
+            lowerDesc.contains("ampliação") -> CBenefBenefitType.OUTROS
+            lowerDesc.contains("transferência") -> CBenefBenefitType.CREDITO_OUTORGADO
+            lowerDesc.contains("tributação") -> CBenefBenefitType.OUTROS
             else -> CBenefBenefitType.OUTROS
         }
     }
@@ -322,17 +306,30 @@ class RJCBenefExtractor(
         val trimmedLine = line.trim()
 
         return trimmedLine.isEmpty() ||
-                trimmedLine.length < 5 ||
-                trimmedLine.startsWith("Código") ||
+                trimmedLine.length < 8 || // RJ + 6 dígitos = 8 chars mínimo
+                trimmedLine.startsWith("CÓDIGO") ||
                 trimmedLine.startsWith("CST") ||
+                trimmedLine.startsWith("DATA") ||
                 trimmedLine.startsWith("Tabela") ||
                 trimmedLine.startsWith("SEFAZ") ||
                 trimmedLine.matches(Regex("^\\d+$")) || // Apenas números
-                trimmedLine.matches(Regex("^[\\s\\-_=X]+$")) || // Apenas separadores e X
+                trimmedLine.matches(Regex("^[\\s\\-_=X]+$")) || // Apenas separadores
                 trimmedLine.contains("SECRETARIA") ||
                 trimmedLine.contains("FAZENDA") ||
                 trimmedLine.contains("GOVERNO") ||
-                trimmedLine.contains("BENEFÍCIO") ||
-                trimmedLine.contains("DESCRIÇÃO")
+                trimmedLine.contains("DESCRIÇÃO") ||
+                trimmedLine.contains("OBSERVAÇÃO") ||
+                trimmedLine.contains("atualizada em") ||
+                trimmedLine.contains("SEM PREENCHIMENTO") ||
+                trimmedLine.contains("Informar apenas")
+    }
+
+    private fun logSampleLines(lines: List<String>) {
+        logger.info("Amostra de linhas do PDF RJ:")
+        lines.take(30).forEachIndexed { index, line ->
+            if (!shouldSkipLine(line) && line.contains("RJ")) {
+                logger.info("Linha $index: '$line'")
+            }
+        }
     }
 }
