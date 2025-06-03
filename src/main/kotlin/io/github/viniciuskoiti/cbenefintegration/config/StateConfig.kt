@@ -1,5 +1,8 @@
 package io.github.viniciuskoiti.cbenefintegration.config
-
+/*
+ * Copyright (c) 2025 Vinícius Koiti Nakahara
+ * Licensed under the MIT License (see LICENSE file)
+ */
 import jakarta.validation.constraints.Max
 import jakarta.validation.constraints.Min
 

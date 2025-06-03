@@ -1,5 +1,9 @@
-package io.github.viniciuskoiti.cbenefintegration.enums
+/*
+ * Copyright (c) 2025 Vinícius Koiti Nakahara
+ * Licensed under the MIT License (see LICENSE file)
+ */
 
+package io.github.viniciuskoiti.cbenefintegration.enums
 enum class CBenefInvoicePurpose(val code: String, val description: String) {
     VENDA("01", "Venda"),
     TRANSFERENCIA("02", "Transferência"),
