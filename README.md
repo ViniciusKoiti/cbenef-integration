@@ -1,6 +1,7 @@
 # CBenef Integration Library
 
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.viniciuskoiti/cbenef-integration)](https://central.sonatype.com/artifact/io.github.viniciuskoiti/cbenef-integration)
+[![GitHub release](https://img.shields.io/github/v/release/ViniciusKoiti/cbenef-integration)](https://github.com/ViniciusKoiti/cbenef-integration/releases)
+[![GitHub packages](https://img.shields.io/badge/GitHub-Packages-blue.svg)](https://github.com/ViniciusKoiti/cbenef-integration/packages)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Kotlin](https://img.shields.io/badge/kotlin-1.9.25-blue.svg?logo=kotlin)](http://kotlinlang.org)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.0-brightgreen.svg)](https://spring.io/projects/spring-boot)
@@ -21,8 +22,8 @@ Biblioteca Kotlin/Spring Boot para integração com dados CBenef (Código de Ben
 // ✅ RECOMENDADO - Sincronização periódica
 @Scheduled(cron = "0 0 2 * * ?") // Todo dia às 2h
 suspend fun sincronizarBeneficios() {
-    val beneficios = cbenefLibrary.extractAllBenefits(useCache = false)
-    beneficioRepository.saveAll(beneficios.map { it.toEntity() })
+   val beneficios = cbenefLibrary.extractAllBenefits(useCache = false)
+   beneficioRepository.saveAll(beneficios.map { it.toEntity() })
 }
 
 // ❌ NÃO RECOMENDADO - Consulta direta em runtime
@@ -38,21 +39,68 @@ val benefits = cbenefLibrary.extractAllBenefits() // Lento + Memória
 
 ## 🚀 Instalação
 
-### Maven
-```xml
-<dependency>
-    <groupId>io.github.viniciuskoiti</groupId>
-    <artifactId>cbenef-integration</artifactId>
-    <version>1.1.0-SNAPSHOT</version>
-</dependency>
-```
-
-### Gradle
+### JitPack (Recomendado - Sem autenticação)
 ```kotlin
-implementation("io.github.viniciuskoiti:cbenef-integration:1.1.0-SNAPSHOT")
+repositories {
+    maven { url = uri("https://jitpack.io") }
+}
+
+dependencies {
+    implementation("com.github.ViniciusKoiti:cbenef-integration:v1.1.0")
+}
 ```
 
-## 📋 Estados Suportados
+### GitHub Packages
+```kotlin
+repositories {
+    maven {
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/ViniciusKoiti/cbenef-integration")
+        credentials {
+            username = "seu_github_username"
+            password = "seu_github_token" // Personal Access Token
+        }
+    }
+}
+
+dependencies {
+    implementation("io.github.viniciuskoiti:cbenef-integration:1.1.0-SNAPSHOT")
+}
+```
+
+### Gradle (Local Build)
+```bash
+git clone https://github.com/ViniciusKoiti/cbenef-integration.git
+cd cbenef-integration
+./gradlew publishToMavenLocal
+
+# No seu projeto:
+dependencies {
+    implementation("io.github.viniciuskoiti:cbenef-integration:1.1.0-SNAPSHOT")
+}
+```
+
+> 📋 **Nota**: Em breve disponível no Maven Central para instalação sem autenticação
+
+## 📊 Arquitetura Recomendada
+
+```
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│   SEFAZ PDFs    │ ── │ CBenef Library   │ ── │ Seu Banco │
+│   (SC/ES/RJ)    │    │ (Sincronização)  │    │ (Consultas)     │
+└─────────────────┘    └──────────────────┘    └─────────────────┘
+       ↑                        ↑                       ↑
+   Fontes Externas        Job Agendado            Runtime Rápido
+   (Lentas/Instáveis)     (1x por dia)           (Milissegundos)
+```
+
+### Vantagens desta Abordagem:
+
+- ⚡ **Performance**: Consultas em milissegundos no banco local
+- 🛡️ **Resilência**: Aplicação funciona mesmo se SEFAZs estiverem offline
+- 🎯 **Controle**: Você decide quando atualizar e como tratar erros
+- 💾 **Otimização**: Índices, queries otimizadas, relacionamentos
+- 📊 **Analytics**: Histórico, auditoria, relatórios customizados
 
 | Estado | Status | Formato | Última Atualização |
 |--------|--------|---------|-------------------|
@@ -345,18 +393,18 @@ class BeneficioFiscalService(private val cbenefLibrary: CBenefLibrary) {
 ```kotlin
 @Service
 class RelatorioFiscalService(private val cbenefLibrary: CBenefLibrary) {
-    
-    suspend fun gerarRelatorioCompleto(): RelatorioFiscal {
-        val todosBeneficios = cbenefLibrary.extractAllBenefits(useCache = false)
-        
-        return RelatorioFiscal(
-            totalBeneficios = todosBeneficios.size,
-            beneficiosAtivos = todosBeneficios.count { it.isActive() },
-            beneficiosPorEstado = todosBeneficios.groupBy { it.stateCode }
-                .mapValues { it.value.size },
-            dataExtracao = LocalDateTime.now()
-        )
-    }
+
+   suspend fun gerarRelatorioCompleto(): RelatorioFiscal {
+      val todosBeneficios = cbenefLibrary.extractAllBenefits(useCache = false)
+
+      return RelatorioFiscal(
+         totalBeneficios = todosBeneficios.size,
+         beneficiosAtivos = todosBeneficios.count { it.isActive() },
+         beneficiosPorEstado = todosBeneficios.groupBy { it.stateCode }
+            .mapValues { it.value.size },
+         dataExtracao = LocalDateTime.now()
+      )
+   }
 }
 ```
 
