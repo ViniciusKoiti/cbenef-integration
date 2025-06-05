@@ -107,11 +107,15 @@ data class CBenefProperties(
                     )
                 ),
                 "PR" to StateConfig(
-                    enabled = false,
+                    enabled = true,
                     priority = 4,
                     sourceUrl = "http://sped.fazenda.pr.gov.br/sites/sped/arquivos_restritos/files/documento/2025-04/TABELA_5_2_COMPLETA.pdf",
                     customTimeout = 30000,
-                    customHeaders = mapOf("Accept" to "application/pdf")
+                    customReadTimeout = 90000,
+                    customHeaders = mapOf(
+                        "Accept" to "application/pdf",
+                        "User-Agent" to "Mozilla/5.0 (compatible; CBenef-Library/1.0)"
+                    )
                 ),
                 "RS" to StateConfig(
                     enabled = false,
