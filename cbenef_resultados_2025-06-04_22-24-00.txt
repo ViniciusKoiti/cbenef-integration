@@ -1,0 +1,531 @@
+================================================================================
+RELATÓRIO COMPLETO CBenef Integration Library
+Gerado em: 04/06/2025 22:24:01
+================================================================================
+
+1. ESTADOS CONFIGURADOS
+------------------------------
+Total de estados configurados: 4
+Estados: SC, ES, RJ, PR
+
+2. TESTE DE CONECTIVIDADE
+------------------------------
+SC: ✅ ONLINE
+ES: ✅ ONLINE
+RJ: ✅ ONLINE
+PR: ✅ ONLINE
+
+Resumo conectividade:
+• Estados ONLINE: 4
+• Estados OFFLINE: 0
+
+3. EXTRAÇÃO DE BENEFÍCIOS POR ESTADO
+----------------------------------------
+Processando estado: SC
+✅ SUCESSO: 606 benefícios extraídos
+   • Ativos: 594
+   • Inativos: 12
+   • Tempo: 17530ms
+
+Processando estado: ES
+✅ SUCESSO: 246 benefícios extraídos
+   • Ativos: 244
+   • Inativos: 2
+   • Tempo: 4268ms
+
+Processando estado: RJ
+✅ SUCESSO: 640 benefícios extraídos
+   • Ativos: 582
+   • Inativos: 58
+   • Tempo: 2361ms
+
+Processando estado: PR
+✅ SUCESSO: 505 benefícios extraídos
+   • Ativos: 468
+   • Inativos: 37
+   • Tempo: 6021ms
+
+4. RESUMO CONSOLIDADO
+-------------------------
+Estados configurados:     4
+Estados online:           4
+Estados com sucesso:      4
+Estados com erro:         0
+Total de benefícios:      1997
+Tempo total de extração:  30180ms
+Média por estado:         499 benefícios
+Tempo médio por estado:   7545ms
+Tempo médio por benefício: 15ms
+
+5. RANKING DETALHADO POR ESTADO
+-----------------------------------
+1º LUGAR: RJ
+   • Total de benefícios: 640
+   • Benefícios ativos: 582 (90,9%)
+   • Benefícios inativos: 58
+   • Tempo de extração: 2361ms
+   • Tempo por benefício: 3ms
+
+2º LUGAR: SC
+   • Total de benefícios: 606
+   • Benefícios ativos: 594 (98,0%)
+   • Benefícios inativos: 12
+   • Tempo de extração: 17530ms
+   • Tempo por benefício: 28ms
+
+3º LUGAR: PR
+   • Total de benefícios: 505
+   • Benefícios ativos: 468 (92,7%)
+   • Benefícios inativos: 37
+   • Tempo de extração: 6021ms
+   • Tempo por benefício: 11ms
+
+4º LUGAR: ES
+   • Total de benefícios: 246
+   • Benefícios ativos: 244 (99,2%)
+   • Benefícios inativos: 2
+   • Tempo de extração: 4268ms
+   • Tempo por benefício: 17ms
+
+6. ANÁLISE POR TIPO DE BENEFÍCIO
+-----------------------------------
+Isenção: 635 benefícios (31,8%)
+   └─ SC: 237
+   └─ ES: 2
+   └─ RJ: 188
+   └─ PR: 208
+
+Outros: 497 benefícios (24,9%)
+   └─ SC: 72
+   └─ ES: 242
+   └─ RJ: 108
+   └─ PR: 75
+
+Diferimento: 427 benefícios (21,4%)
+   └─ SC: 125
+   └─ RJ: 156
+   └─ PR: 146
+
+Crédito Outorgado: 172 benefícios (8,6%)
+   └─ SC: 94
+   └─ RJ: 78
+
+Redução de Base de Cálculo: 162 benefícios (8,1%)
+   └─ SC: 53
+   └─ ES: 2
+   └─ RJ: 95
+   └─ PR: 12
+
+Suspensão: 68 benefícios (3,4%)
+   └─ SC: 23
+   └─ RJ: 13
+   └─ PR: 32
+
+Não Incidência: 36 benefícios (1,8%)
+   └─ SC: 2
+   └─ RJ: 2
+   └─ PR: 32
+
+7. DETALHAMENTO COMPLETO POR ESTADO
+----------------------------------------
+ESTADO: RJ
+==================================================
+Total de benefícios: 640
+Benefícios ativos: 582
+Benefícios inativos: 58
+Tempo de extração: 2361ms
+
+AMOSTRA DOS PRIMEIROS 10 BENEFÍCIOS:
+----------------------------------------
+1. Código: RJ801001
+   Descrição: Convênio AE 5 de 1972 - Isenção
+   Tipo: Isenção
+   Status: ✅ ATIVO
+   Vigência: 2019-04-01 até indefinido
+   CSTs aplicáveis: 00, 10
+   Metadados: {extractionMethod=PDF_RJ_MAIN_PATTERN, sourceUrl=https://portal.fazenda.rj.gov.br/dfe/wp-content/uploads/sites/17/2023/10/Tabela-codigo-de-beneficio-X-CST.pdf, documentType=PDF_RJ_TABLE, fullCode=RJ801001, applicableCSTs=00,10, originalLine=RJ801001 SIM SIM 01/04/2019 Convênio AE 5 de 1972 - Isenção}
+
+2. Código: RJ823002
+   Descrição: Convênio AE 15 de 1974 - Suspensão
+   Tipo: Suspensão
+   Status: ✅ ATIVO
+   Vigência: 2019-04-01 até indefinido
+   Metadados: {extractionMethod=PDF_RJ_MAIN_PATTERN, sourceUrl=https://portal.fazenda.rj.gov.br/dfe/wp-content/uploads/sites/17/2023/10/Tabela-codigo-de-beneficio-X-CST.pdf, documentType=PDF_RJ_TABLE, fullCode=RJ823002, applicableCSTs=, originalLine=RJ823002 01/04/2019 Convênio AE 15 de 1974 - Suspensão}
+
+3. Código: RJ801003
+   Descrição: Convênio do Rio de Janeiro I de 1967 - Isenção
+   Tipo: Isenção
+   Status: ✅ ATIVO
+   Vigência: 2019-04-01 até indefinido
+   CSTs aplicáveis: 00, 10
+   Metadados: {extractionMethod=PDF_RJ_MAIN_PATTERN, sourceUrl=https://portal.fazenda.rj.gov.br/dfe/wp-content/uploads/sites/17/2023/10/Tabela-codigo-de-beneficio-X-CST.pdf, documentType=PDF_RJ_TABLE, fullCode=RJ801003, applicableCSTs=00,10, originalLine=RJ801003 SIM SIM 01/04/2019 Convênio do Rio de Janeiro I de 1967 - Isenção}
+
+4. Código: RJ801004
+   Descrição: Convênio do Rio de Janeiro V de 1968 - Isenção
+   Tipo: Isenção
+   Status: ✅ ATIVO
+   Vigência: 2019-04-01 até indefinido
+   CSTs aplicáveis: 00, 10
+   Metadados: {extractionMethod=PDF_RJ_MAIN_PATTERN, sourceUrl=https://portal.fazenda.rj.gov.br/dfe/wp-content/uploads/sites/17/2023/10/Tabela-codigo-de-beneficio-X-CST.pdf, documentType=PDF_RJ_TABLE, fullCode=RJ801004, applicableCSTs=00,10, originalLine=RJ801004 SIM SIM 01/04/2019 Convênio do Rio de Janeiro V de 1968 - Isenção}
+
+5. Código: RJ801005
+   Descrição: Convênio ICM 01 de 1975 - Isenção
+   Tipo: Isenção
+   Status: ✅ ATIVO
+   Vigência: 2019-04-01 até indefinido
+   CSTs aplicáveis: 00, 10
+   Metadados: {extractionMethod=PDF_RJ_MAIN_PATTERN, sourceUrl=https://portal.fazenda.rj.gov.br/dfe/wp-content/uploads/sites/17/2023/10/Tabela-codigo-de-beneficio-X-CST.pdf, documentType=PDF_RJ_TABLE, fullCode=RJ801005, applicableCSTs=00,10, originalLine=RJ801005 SIM SIM 01/04/2019 Convênio ICM 01 de 1975 - Isenção}
+
+6. Código: RJ801006
+   Descrição: Convênio ICM 10 de 1975 - Isenção
+   Tipo: Isenção
+   Status: ✅ ATIVO
+   Vigência: 2019-04-01 até indefinido
+   CSTs aplicáveis: 00, 10
+   Metadados: {extractionMethod=PDF_RJ_MAIN_PATTERN, sourceUrl=https://portal.fazenda.rj.gov.br/dfe/wp-content/uploads/sites/17/2023/10/Tabela-codigo-de-beneficio-X-CST.pdf, documentType=PDF_RJ_TABLE, fullCode=RJ801006, applicableCSTs=00,10, originalLine=RJ801006 SIM SIM 01/04/2019 Convênio ICM 10 de 1975 - Isenção}
+
+7. Código: RJ801007
+   Descrição: Convênio ICM 12 de 1975 - Isenção
+   Tipo: Isenção
+   Status: ✅ ATIVO
+   Vigência: 2019-04-01 até indefinido
+   CSTs aplicáveis: 00, 10
+   Metadados: {extractionMethod=PDF_RJ_MAIN_PATTERN, sourceUrl=https://portal.fazenda.rj.gov.br/dfe/wp-content/uploads/sites/17/2023/10/Tabela-codigo-de-beneficio-X-CST.pdf, documentType=PDF_RJ_TABLE, fullCode=RJ801007, applicableCSTs=00,10, originalLine=RJ801007 SIM SIM 01/04/2019 Convênio ICM 12 de 1975 - Isenção}
+
+8. Código: RJ802008
+   Descrição: Convênio ICM 15 de 1981 - Redução de Base de Cálculo
+   Tipo: Redução de Base de Cálculo
+   Status: ✅ ATIVO
+   Vigência: 2019-04-01 até indefinido
+   CSTs aplicáveis: 00, 10
+   Metadados: {extractionMethod=PDF_RJ_MAIN_PATTERN, sourceUrl=https://portal.fazenda.rj.gov.br/dfe/wp-content/uploads/sites/17/2023/10/Tabela-codigo-de-beneficio-X-CST.pdf, documentType=PDF_RJ_TABLE, fullCode=RJ802008, applicableCSTs=00,10, originalLine=RJ802008 SIM SIM 01/04/2019 Convênio ICM 15 de 1981 - Redução de Base de Cálculo}
+
+9. Código: RJ808009
+   Descrição: 01/04/2019
+   Tipo: Outros
+   Status: ✅ ATIVO
+   Vigência: 2019-04-01 até indefinido
+   CSTs aplicáveis: 00, 10
+   Metadados: {extractionMethod=PDF_RJ_FALLBACK_PATTERN, sourceUrl=https://portal.fazenda.rj.gov.br/dfe/wp-content/uploads/sites/17/2023/10/Tabela-codigo-de-beneficio-X-CST.pdf, documentType=PDF_RJ_FALLBACK, fullCode=RJ808009, applicableCSTs=00,10, lineIndex=12}
+
+10. Código: RJ801010
+   Descrição: Convênio ICM 26 de 1975 - Isenção
+   Tipo: Isenção
+   Status: ✅ ATIVO
+   Vigência: 2019-04-01 até indefinido
+   CSTs aplicáveis: 00, 10
+   Metadados: {extractionMethod=PDF_RJ_MAIN_PATTERN, sourceUrl=https://portal.fazenda.rj.gov.br/dfe/wp-content/uploads/sites/17/2023/10/Tabela-codigo-de-beneficio-X-CST.pdf, documentType=PDF_RJ_TABLE, fullCode=RJ801010, applicableCSTs=00,10, originalLine=RJ801010 SIM SIM 01/04/2019 Convênio ICM 26 de 1975 - Isenção}
+
+... e mais 630 benefícios
+
+DISTRIBUIÇÃO POR TIPO DE BENEFÍCIO:
+----------------------------------------
+Isenção: 188 (29,4%)
+Suspensão: 13 (2,0%)
+Redução de Base de Cálculo: 95 (14,8%)
+Outros: 108 (16,9%)
+Diferimento: 156 (24,4%)
+Crédito Outorgado: 78 (12,2%)
+Não Incidência: 2 (0,3%)
+
+==================================================
+
+ESTADO: SC
+==================================================
+Total de benefícios: 606
+Benefícios ativos: 594
+Benefícios inativos: 12
+Tempo de extração: 17530ms
+
+AMOSTRA DOS PRIMEIROS 10 BENEFÍCIOS:
+----------------------------------------
+1. Código: SC999999
+   Descrição: legal nas informações complementares. Crédito Presumido
+   Tipo: Crédito Outorgado
+   Status: ✅ ATIVO
+   Vigência: 2024-10-01 até indefinido
+   Metadados: {extractionMethod=PDF_ENHANCED_EXTRACTION, sourceUrl=https://www.sef.sc.gov.br/api-portal/Documento/Ver/1188, documentType=PDF_STRUCTURED, fullCode=SC999999, lineIndex=15}
+
+2. Código: SC850001
+   Descrição: 2°, XVII, Anexo 02 do RICMS/SC. Crédito Presumido
+   Tipo: Crédito Outorgado
+   Status: ✅ ATIVO
+   Vigência: 2023-05-01 até indefinido
+   Metadados: {extractionMethod=PDF_ENHANCED_EXTRACTION, sourceUrl=https://www.sef.sc.gov.br/api-portal/Documento/Ver/1188, documentType=PDF_STRUCTURED, fullCode=SC850001, lineIndex=23}
+
+3. Código: SC850002
+   Descrição: respectivamente, da NBM/SH – NCM. Crédito Presumido
+   Tipo: Crédito Outorgado
+   Status: ✅ ATIVO
+   Vigência: 2023-05-01 até indefinido
+   Metadados: {extractionMethod=PDF_ENHANCED_EXTRACTION, sourceUrl=https://www.sef.sc.gov.br/api-portal/Documento/Ver/1188, documentType=PDF_STRUCTURED, fullCode=SC850002, lineIndex=32}
+
+4. Código: SC850003
+   Descrição: operações sujeitas à alíquota de 12% (doze por cento). Crédito Presumido
+   Tipo: Crédito Outorgado
+   Status: ✅ ATIVO
+   Vigência: 2023-05-01 até indefinido
+   Metadados: {extractionMethod=PDF_ENHANCED_EXTRACTION, sourceUrl=https://www.sef.sc.gov.br/api-portal/Documento/Ver/1188, documentType=PDF_STRUCTURED, fullCode=SC850003, lineIndex=44}
+
+5. Código: SC850004
+   Descrição: cálculo. Crédito Presumido
+   Tipo: Crédito Outorgado
+   Status: ✅ ATIVO
+   Vigência: 2023-05-01 até indefinido
+   Metadados: {extractionMethod=PDF_ENHANCED_EXTRACTION, sourceUrl=https://www.sef.sc.gov.br/api-portal/Documento/Ver/1188, documentType=PDF_STRUCTURED, fullCode=SC850004, lineIndex=53}
+
+6. Código: SC850005
+   Descrição: demais casos. Crédito Presumido
+   Tipo: Crédito Outorgado
+   Status: ✅ ATIVO
+   Vigência: 2023-05-01 até indefinido
+   Metadados: {extractionMethod=PDF_ENHANCED_EXTRACTION, sourceUrl=https://www.sef.sc.gov.br/api-portal/Documento/Ver/1188, documentType=PDF_STRUCTURED, fullCode=SC850005, lineIndex=66}
+
+7. Código: SC850006
+   Descrição: previstas no inciso XIV do art. 15 do Anexo 2 do RICMS/SC-01. Crédito Presumido
+   Tipo: Crédito Outorgado
+   Status: ✅ ATIVO
+   Vigência: 2023-05-01 até indefinido
+   Metadados: {extractionMethod=PDF_ENHANCED_EXTRACTION, sourceUrl=https://www.sef.sc.gov.br/api-portal/Documento/Ver/1188, documentType=PDF_STRUCTURED, fullCode=SC850006, lineIndex=73}
+
+8. Código: SC850007
+   Descrição: energética. Crédito Presumido
+   Tipo: Crédito Outorgado
+   Status: ✅ ATIVO
+   Vigência: 2023-05-01 até indefinido
+   Metadados: {extractionMethod=PDF_ENHANCED_EXTRACTION, sourceUrl=https://www.sef.sc.gov.br/api-portal/Documento/Ver/1188, documentType=PDF_STRUCTURED, fullCode=SC850007, lineIndex=89}
+
+9. Código: SC850008
+   Descrição: RICMS/SC-01. Crédito Presumido
+   Tipo: Crédito Outorgado
+   Status: ✅ ATIVO
+   Vigência: 2023-05-01 até indefinido
+   Metadados: {extractionMethod=PDF_ENHANCED_EXTRACTION, sourceUrl=https://www.sef.sc.gov.br/api-portal/Documento/Ver/1188, documentType=PDF_STRUCTURED, fullCode=SC850008, lineIndex=96}
+
+10. Código: SC850009
+   Descrição: ou moído; e c) açúcar. Crédito Presumido
+   Tipo: Crédito Outorgado
+   Status: ✅ ATIVO
+   Vigência: 2023-05-01 até indefinido
+   Metadados: {extractionMethod=PDF_ENHANCED_EXTRACTION, sourceUrl=https://www.sef.sc.gov.br/api-portal/Documento/Ver/1188, documentType=PDF_STRUCTURED, fullCode=SC850009, lineIndex=103}
+
+... e mais 596 benefícios
+
+DISTRIBUIÇÃO POR TIPO DE BENEFÍCIO:
+----------------------------------------
+Crédito Outorgado: 94 (15,5%)
+Outros: 72 (11,9%)
+Redução de Base de Cálculo: 53 (8,7%)
+Isenção: 237 (39,1%)
+Suspensão: 23 (3,8%)
+Diferimento: 125 (20,6%)
+Não Incidência: 2 (0,3%)
+
+==================================================
+
+ESTADO: PR
+==================================================
+Total de benefícios: 505
+Benefícios ativos: 468
+Benefícios inativos: 37
+Tempo de extração: 6021ms
+
+AMOSTRA DOS PRIMEIROS 10 BENEFÍCIOS:
+----------------------------------------
+1. Código: PR800000
+   Descrição: Benefício fiscal ICMS - PR800000
+   Tipo: Outros
+   Status: ✅ ATIVO
+   Vigência: 2018-08-01 até indefinido
+   Metadados: {extractionMethod=PDF_PR_PATTERN_FALLBACK, sourceUrl=http://sped.fazenda.pr.gov.br/sites/sped/arquivos_restritos/files/documento/2025-04/TABELA_5_2_COMPLETA.pdf, documentType=PDF_PR_FALLBACK, fullCode=PR800000, lineIndex=3}
+
+2. Código: PR800001
+   Descrição: Benefício fiscal ICMS - PR800001
+   Tipo: Outros
+   Status: ✅ ATIVO
+   Vigência: 2018-08-01 até indefinido
+   Metadados: {extractionMethod=PDF_PR_PATTERN_FALLBACK, sourceUrl=http://sped.fazenda.pr.gov.br/sites/sped/arquivos_restritos/files/documento/2025-04/TABELA_5_2_COMPLETA.pdf, documentType=PDF_PR_FALLBACK, fullCode=PR800001, lineIndex=4}
+
+3. Código: PR800002
+   Descrição: Benefício fiscal ICMS - PR800002
+   Tipo: Outros
+   Status: ✅ ATIVO
+   Vigência: 2018-08-01 até indefinido
+   Metadados: {extractionMethod=PDF_PR_PATTERN_FALLBACK, sourceUrl=http://sped.fazenda.pr.gov.br/sites/sped/arquivos_restritos/files/documento/2025-04/TABELA_5_2_COMPLETA.pdf, documentType=PDF_PR_FALLBACK, fullCode=PR800002, lineIndex=5}
+
+4. Código: PR800003
+   Descrição: Benefício fiscal ICMS - PR800003
+   Tipo: Outros
+   Status: ✅ ATIVO
+   Vigência: 2018-08-01 até indefinido
+   Metadados: {extractionMethod=PDF_PR_PATTERN_FALLBACK, sourceUrl=http://sped.fazenda.pr.gov.br/sites/sped/arquivos_restritos/files/documento/2025-04/TABELA_5_2_COMPLETA.pdf, documentType=PDF_PR_FALLBACK, fullCode=PR800003, lineIndex=6}
+
+5. Código: PR800004
+   Descrição: IV - operações com ouro, quando definido em lei como ativo financeiro ou instrumento cambial;
+   Tipo: Outros
+   Status: ✅ ATIVO
+   Vigência: 2018-08-01 até indefinido
+   Metadados: {extractionMethod=PDF_PR_PATTERN_FALLBACK, sourceUrl=http://sped.fazenda.pr.gov.br/sites/sped/arquivos_restritos/files/documento/2025-04/TABELA_5_2_COMPLETA.pdf, documentType=PDF_PR_FALLBACK, fullCode=PR800004, lineIndex=7}
+
+6. Código: PR800005
+   Descrição: Benefício fiscal ICMS - PR800005
+   Tipo: Outros
+   Status: ✅ ATIVO
+   Vigência: 2018-08-01 até indefinido
+   Metadados: {extractionMethod=PDF_PR_PATTERN_FALLBACK, sourceUrl=http://sped.fazenda.pr.gov.br/sites/sped/arquivos_restritos/files/documento/2025-04/TABELA_5_2_COMPLETA.pdf, documentType=PDF_PR_FALLBACK, fullCode=PR800005, lineIndex=8}
+
+7. Código: PR800006
+   Descrição: Benefício fiscal ICMS - PR800006
+   Tipo: Outros
+   Status: ✅ ATIVO
+   Vigência: 2018-08-01 até indefinido
+   Metadados: {extractionMethod=PDF_PR_PATTERN_FALLBACK, sourceUrl=http://sped.fazenda.pr.gov.br/sites/sped/arquivos_restritos/files/documento/2025-04/TABELA_5_2_COMPLETA.pdf, documentType=PDF_PR_FALLBACK, fullCode=PR800006, lineIndex=9}
+
+8. Código: PR800007
+   Descrição: Benefício fiscal ICMS - PR800007
+   Tipo: Outros
+   Status: ✅ ATIVO
+   Vigência: 2018-08-01 até indefinido
+   Metadados: {extractionMethod=PDF_PR_PATTERN_FALLBACK, sourceUrl=http://sped.fazenda.pr.gov.br/sites/sped/arquivos_restritos/files/documento/2025-04/TABELA_5_2_COMPLETA.pdf, documentType=PDF_PR_FALLBACK, fullCode=PR800007, lineIndex=10}
+
+9. Código: PR800008
+   Descrição: Benefício fiscal ICMS - PR800008
+   Tipo: Outros
+   Status: ✅ ATIVO
+   Vigência: 2018-08-01 até indefinido
+   Metadados: {extractionMethod=PDF_PR_PATTERN_FALLBACK, sourceUrl=http://sped.fazenda.pr.gov.br/sites/sped/arquivos_restritos/files/documento/2025-04/TABELA_5_2_COMPLETA.pdf, documentType=PDF_PR_FALLBACK, fullCode=PR800008, lineIndex=11}
+
+10. Código: PR800009
+   Descrição: Benefício fiscal ICMS - PR800009
+   Tipo: Outros
+   Status: ✅ ATIVO
+   Vigência: 2018-08-01 até indefinido
+   Metadados: {extractionMethod=PDF_PR_PATTERN_FALLBACK, sourceUrl=http://sped.fazenda.pr.gov.br/sites/sped/arquivos_restritos/files/documento/2025-04/TABELA_5_2_COMPLETA.pdf, documentType=PDF_PR_FALLBACK, fullCode=PR800009, lineIndex=12}
+
+... e mais 495 benefícios
+
+DISTRIBUIÇÃO POR TIPO DE BENEFÍCIO:
+----------------------------------------
+Outros: 75 (14,9%)
+Não Incidência: 32 (6,3%)
+Isenção: 208 (41,2%)
+Redução de Base de Cálculo: 12 (2,4%)
+Diferimento: 146 (28,9%)
+Suspensão: 32 (6,3%)
+
+==================================================
+
+ESTADO: ES
+==================================================
+Total de benefícios: 246
+Benefícios ativos: 244
+Benefícios inativos: 2
+Tempo de extração: 4268ms
+
+AMOSTRA DOS PRIMEIROS 10 BENEFÍCIOS:
+----------------------------------------
+1. Código: ES100001
+   Descrição: Benefício fiscal ICMS - ES100001
+   Tipo: Outros
+   Status: ✅ ATIVO
+   Vigência: 2018-03-01 até 2032-12-31
+   Metadados: {extractionMethod=PDF_FALLBACK_EXTRACTION, sourceUrl=https://sefaz.es.gov.br/Media/Sefaz/Receita%20Estadual/GEFIS/cBenef%20ES%20V6.pdf, documentType=PDF_STRUCTURED, fullCode=ES100001, lineIndex=41}
+
+2. Código: ES120001
+   Descrição: Benefício fiscal ICMS - ES120001
+   Tipo: Outros
+   Status: ✅ ATIVO
+   Vigência: 2016-07-01 até 2032-12-31
+   Metadados: {extractionMethod=PDF_FALLBACK_EXTRACTION, sourceUrl=https://sefaz.es.gov.br/Media/Sefaz/Receita%20Estadual/GEFIS/cBenef%20ES%20V6.pdf, documentType=PDF_STRUCTURED, fullCode=ES120001, lineIndex=52}
+
+3. Código: ES130001
+   Descrição: Benefício fiscal ICMS - ES130001
+   Tipo: Outros
+   Status: ✅ ATIVO
+   Vigência: 2021-12-16 até 2026-04-30
+   Metadados: {extractionMethod=PDF_TABLE_EXTRACTION, sourceUrl=https://sefaz.es.gov.br/Media/Sefaz/Receita%20Estadual/GEFIS/cBenef%20ES%20V6.pdf, documentType=PDF_TABULAR, fullCode=ES130001, legalBasis=realizadas, observation=no âmbito do REPETRO., lineIndex=56}
+
+4. Código: ES100002
+   Descrição: Benefício fiscal ICMS - ES100002
+   Tipo: Outros
+   Status: ✅ ATIVO
+   Vigência: 2018-12-03 até indefinido
+   Metadados: {extractionMethod=PDF_FALLBACK_EXTRACTION, sourceUrl=https://sefaz.es.gov.br/Media/Sefaz/Receita%20Estadual/GEFIS/cBenef%20ES%20V6.pdf, documentType=PDF_STRUCTURED, fullCode=ES100002, lineIndex=63}
+
+5. Código: ES100003
+   Descrição: Benefício fiscal ICMS - ES100003
+   Tipo: Outros
+   Status: ✅ ATIVO
+   Vigência: 2019-10-07 até indefinido
+   Metadados: {extractionMethod=PDF_FALLBACK_EXTRACTION, sourceUrl=https://sefaz.es.gov.br/Media/Sefaz/Receita%20Estadual/GEFIS/cBenef%20ES%20V6.pdf, documentType=PDF_STRUCTURED, fullCode=ES100003, lineIndex=71}
+
+6. Código: ES100004
+   Descrição: Benefício fiscal ICMS - ES100004
+   Tipo: Outros
+   Status: ✅ ATIVO
+   Vigência: 2020-01-28 até indefinido
+   Metadados: {extractionMethod=PDF_FALLBACK_EXTRACTION, sourceUrl=https://sefaz.es.gov.br/Media/Sefaz/Receita%20Estadual/GEFIS/cBenef%20ES%20V6.pdf, documentType=PDF_STRUCTURED, fullCode=ES100004, lineIndex=79}
+
+7. Código: ES100005
+   Descrição: Benefício fiscal ICMS - ES100005
+   Tipo: Outros
+   Status: ✅ ATIVO
+   Vigência: 2021-11-29 até indefinido
+   Metadados: {extractionMethod=PDF_FALLBACK_EXTRACTION, sourceUrl=https://sefaz.es.gov.br/Media/Sefaz/Receita%20Estadual/GEFIS/cBenef%20ES%20V6.pdf, documentType=PDF_STRUCTURED, fullCode=ES100005, lineIndex=85}
+
+8. Código: ES100006
+   Descrição: Benefício fiscal ICMS - ES100006
+   Tipo: Outros
+   Status: ✅ ATIVO
+   Vigência: 2021-11-29 até indefinido
+   Metadados: {extractionMethod=PDF_FALLBACK_EXTRACTION, sourceUrl=https://sefaz.es.gov.br/Media/Sefaz/Receita%20Estadual/GEFIS/cBenef%20ES%20V6.pdf, documentType=PDF_STRUCTURED, fullCode=ES100006, lineIndex=91}
+
+9. Código: ES100007
+   Descrição: Benefício fiscal ICMS - ES100007
+   Tipo: Isenção
+   Status: ✅ ATIVO
+   Vigência: 2022-05-25 até 2032-12-31
+   Metadados: {extractionMethod=PDF_TABLE_EXTRACTION, sourceUrl=https://sefaz.es.gov.br/Media/Sefaz/Receita%20Estadual/GEFIS/cBenef%20ES%20V6.pdf, documentType=PDF_TABULAR, fullCode=ES100007, legalBasis=interna, observation=de pedra britada. Art. 5º-G da Lei 7.000/01 Isenção do ICMS, lineIndex=97}
+
+10. Código: ES100008
+   Descrição: Benefício fiscal ICMS - ES100008
+   Tipo: Outros
+   Status: ✅ ATIVO
+   Vigência: 2022-07-18 até 2032-12-31
+   Metadados: {extractionMethod=PDF_FALLBACK_EXTRACTION, sourceUrl=https://sefaz.es.gov.br/Media/Sefaz/Receita%20Estadual/GEFIS/cBenef%20ES%20V6.pdf, documentType=PDF_STRUCTURED, fullCode=ES100008, lineIndex=98}
+
+... e mais 236 benefícios
+
+DISTRIBUIÇÃO POR TIPO DE BENEFÍCIO:
+----------------------------------------
+Outros: 242 (98,4%)
+Isenção: 2 (0,8%)
+Redução de Base de Cálculo: 2 (0,8%)
+
+==================================================
+
+9. ANÁLISE DE PERFORMANCE
+-------------------------
+Tempo médio de extração: 7545ms
+Tempo mínimo: 2361ms
+Tempo máximo: 17530ms
+
+Performance por estado:
+RJ: 2361ms (271,1 benefícios/segundo)
+ES: 4268ms (57,6 benefícios/segundo)
+PR: 6021ms (83,9 benefícios/segundo)
+SC: 17530ms (34,6 benefícios/segundo)
+
+10. RECOMENDAÇÕES E OBSERVAÇÕES
+-----------------------------------
+• Cache habilitado: ❌ Não - considere habilitar para melhor performance
+• Total de benefícios disponíveis: 1997
+• Taxa de sucesso: 100,0%
+
+================================================================================
+Relatório gerado com sucesso!
+Arquivo: cbenef_resultados_2025-06-04_22-24-00.txt
+Data/Hora: 04/06/2025 22:24:35
+Estados processados: 4/[SC, ES, RJ, PR].size
+Total de benefícios: 1997
+================================================================================
