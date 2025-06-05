@@ -11,6 +11,7 @@ import io.github.viniciuskoiti.cbenefintegration.client.CBenefDownloadClient
 import io.github.viniciuskoiti.cbenefintegration.config.CBenefProperties
 import io.github.viniciuskoiti.cbenefintegration.core.CBenefExtractor
 import io.github.viniciuskoiti.cbenefintegration.core.extractor.ESCBenefExtractor
+import io.github.viniciuskoiti.cbenefintegration.core.extractor.PRCBenefExtractor
 import io.github.viniciuskoiti.cbenefintegration.core.extractor.RJCBenefExtractor
 import io.github.viniciuskoiti.cbenefintegration.core.extractor.SCCBenefExtractor
 import org.springframework.stereotype.Component
@@ -27,6 +28,7 @@ class CBenefExtractorFactory(
             "SC" -> SCCBenefExtractor(config, downloadClient, availabilityClient)
             "ES" -> ESCBenefExtractor(config, downloadClient, availabilityClient)
             "RJ" -> RJCBenefExtractor(config, downloadClient, availabilityClient)
+            "PR" -> PRCBenefExtractor(config, downloadClient, availabilityClient)
             else -> null
         }
     }
