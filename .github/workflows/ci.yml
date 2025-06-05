@@ -1,0 +1,299 @@
+# .github/workflows/release.yml
+name: 🚀 Release Pipeline
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # Dispara apenas quando uma tag de versão é criada (ex: v1.2.0)
+
+env:
+  GRADLE_OPTS: -Dorg.gradle.daemon=false -Xmx2g -Xms1g
+
+jobs:
+  # ============================================================================
+  # JOB 1: VALIDAÇÃO E TESTES
+  # ============================================================================
+  validate:
+    name: 🔍 Validação e Testes
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout código
+        uses: actions/checkout@v4
+
+      - name: ☕ Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: 🐘 Setup Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: 8.14
+
+      - name: 📋 Validar Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v1
+
+      - name: 🧹 Clean & Build
+        run: ./gradlew clean build
+
+      - name: 🧪 Executar Testes
+        run: ./gradlew test
+
+      - name: 📊 Gerar Relatório de Testes
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: 📋 Relatório de Testes
+          path: build/test-results/test/*.xml
+          reporter: java-junit
+
+      - name: 🔍 Verificar Extratores
+        run: ./gradlew test --tests "*ExtractorTest"
+
+  # ============================================================================
+  # JOB 2: BUILD E PUBLICAÇÃO
+  # ============================================================================
+  release:
+    name: 📦 Build e Release
+    runs-on: ubuntu-latest
+    needs: validate
+
+    outputs:
+      version: ${{ steps.get_version.outputs.version }}
+
+    steps:
+      - name: 📥 Checkout código
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Necessário para tags
+
+      - name: ☕ Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: 🐘 Setup Gradle
+        uses: gradle/gradle-build-action@v2
+
+      - name: 🏷️ Extrair versão da tag
+        id: get_version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "📋 Versão: $VERSION"
+
+      - name: ✏️ Atualizar versão no build.gradle.kts
+        run: |
+          sed -i "s/version = \".*\"/version = \"${{ steps.get_version.outputs.version }}\"/" build.gradle.kts
+          echo "📝 Versão atualizada para: ${{ steps.get_version.outputs.version }}"
+
+      - name: 🔨 Build completo
+        run: ./gradlew clean build -x test
+
+      - name: 📚 Gerar Javadoc
+        run: ./gradlew javadoc
+
+      - name: 📦 Publicar no GitHub Packages
+        env:
+          USERNAME: ${{ github.actor }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ./gradlew publishGprPublicationToGitHubPackagesRepository \
+            -Pgpr.user=$USERNAME \
+            -Pgpr.key=$TOKEN
+
+      - name: 📤 Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts-${{ steps.get_version.outputs.version }}
+          path: |
+            build/libs/*.jar
+            build/docs/javadoc/
+          retention-days: 30
+
+  # ============================================================================
+  # JOB 3: GITHUB RELEASE
+  # ============================================================================
+  github-release:
+    name: 🎉 GitHub Release
+    runs-on: ubuntu-latest
+    needs: [validate, release]
+
+    steps:
+      - name: 📥 Checkout código
+        uses: actions/checkout@v4
+
+      - name: 📥 Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts-${{ needs.release.outputs.version }}
+          path: ./artifacts
+
+      - name: 📋 Gerar Release Notes
+        id: release_notes
+        run: |
+          cat > release_notes.md << 'EOF'
+          ## 🆕 CBenef Integration Library v${{ needs.release.outputs.version }}
+          
+          ### ✨ Novidades
+          - Versão automatizada via GitHub Actions
+          - Build e testes validados automaticamente
+          - Publicação simultânea no GitHub Packages e JitPack
+          
+          ### 📊 Estados Ativos
+          - 🟢 **SC** (Santa Catarina) - ~150 benefícios
+          - 🟢 **ES** (Espírito Santo) - ~80 benefícios  
+          - 🟢 **RJ** (Rio de Janeiro) - ~120 benefícios
+          - 🟢 **PR** (Paraná) - ~200 benefícios
+          
+          **Total: ~550 benefícios fiscais automatizados!** 🎉
+          
+          ### 🚀 Instalação
+          
+          #### JitPack (Recomendado)
+          ```gradle
+          repositories {
+              maven { url = uri("https://jitpack.io") }
+          }
+          
+          dependencies {
+              implementation("com.github.ViniciusKoiti:cbenef-integration:v${{ needs.release.outputs.version }}")
+          }
+          ```
+          
+          #### GitHub Packages
+          ```gradle
+          repositories {
+              maven {
+                  name = "GitHubPackages"
+                  url = uri("https://maven.pkg.github.com/ViniciusKoiti/cbenef-integration")
+                  credentials {
+                      username = "seu_username"
+                      password = "seu_token"
+                  }
+              }
+          }
+          
+          dependencies {
+              implementation("io.github.viniciuskoiti:cbenef-integration:${{ needs.release.outputs.version }}")
+          }
+          ```
+          
+          ### 🔧 Exemplo de Uso
+          ```kotlin
+          val client = StandaloneCBenefClient()
+          
+          // Extrair todos os estados
+          val beneficios = client.extrairTodosOsBeneficios()
+          println("Total: \${beneficios.size} benefícios")
+          
+          // Extrair estado específico
+          val beneficiosPR = client.extrairPorEstado("PR")
+          println("Paraná: \${beneficiosPR.size} benefícios")
+          ```
+          
+          ### 📖 Documentação
+          - [README completo](https://github.com/ViniciusKoiti/cbenef-integration#readme)
+          - [Documentação técnica](https://github.com/ViniciusKoiti/cbenef-integration/wiki)
+          
+          ### 🤝 Contribua
+          - ⭐ Deixe uma estrela se o projeto foi útil
+          - 🐛 Reporte bugs ou problemas
+          - 💡 Sugira novos estados ou melhorias
+          - 🔧 Contribua com código
+          
+          ---
+          **⚡ Release automatizada via GitHub Actions** 
+          EOF
+
+      - name: 🎉 Criar GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: v${{ needs.release.outputs.version }} - CBenef Integration
+          body_path: release_notes.md
+          draft: false
+          prerelease: false
+
+      - name: 📎 Anexar JAR principal
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./artifacts/cbenef-integration-${{ needs.release.outputs.version }}.jar
+          asset_name: cbenef-integration-${{ needs.release.outputs.version }}.jar
+          asset_content_type: application/java-archive
+
+      - name: 📎 Anexar Sources JAR
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./artifacts/cbenef-integration-${{ needs.release.outputs.version }}-sources.jar
+          asset_name: cbenef-integration-${{ needs.release.outputs.version }}-sources.jar
+          asset_content_type: application/java-archive
+
+  # ============================================================================
+  # JOB 4: VALIDAÇÃO JITPACK
+  # ============================================================================
+  validate-jitpack:
+    name: ✅ Validar JitPack
+    runs-on: ubuntu-latest
+    needs: [release, github-release]
+
+    steps:
+      - name: ⏳ Aguardar build JitPack
+        run: |
+          echo "🕐 Aguardando JitPack processar o release..."
+          sleep 60
+
+      - name: 🔍 Verificar disponibilidade JitPack
+        run: |
+          VERSION=${{ needs.release.outputs.version }}
+          echo "🔍 Verificando JitPack para versão: $VERSION"
+          
+          # Tentar baixar os metadados
+          curl -f -s "https://jitpack.io/api/builds/com.github.ViniciusKoiti/cbenef-integration/$VERSION" || {
+            echo "❌ JitPack ainda não disponível"
+            echo "🔗 Verifique manualmente: https://jitpack.io/#ViniciusKoiti/cbenef-integration"
+            exit 1
+          }
+          
+          echo "✅ JitPack disponível para v$VERSION"
+          echo "🔗 Link: https://jitpack.io/#ViniciusKoiti/cbenef-integration/$VERSION"
+
+  # ============================================================================
+  # JOB 5: NOTIFICAÇÕES
+  # ============================================================================
+  notify:
+    name: 📢 Notificações
+    runs-on: ubuntu-latest
+    needs: [validate, release, github-release, validate-jitpack]
+    if: always()
+
+    steps:
+      - name: 🎉 Sucesso - Notificar
+        if: needs.validate.result == 'success' && needs.release.result == 'success' && needs.github-release.result == 'success'
+        run: |
+          echo "🎉 Release v${{ needs.release.outputs.version }} publicado com sucesso!"
+          echo "📦 GitHub Packages: ✅"
+          echo "🏷️ GitHub Release: ✅"
+          echo "📋 JitPack: ✅"
+          echo ""
+          echo "🔗 Links úteis:"
+          echo "   Release: https://github.com/ViniciusKoiti/cbenef-integration/releases/tag/v${{ needs.release.outputs.version }}"
+          echo "   JitPack: https://jitpack.io/#ViniciusKoiti/cbenef-integration/${{ needs.release.outputs.version }}"
+
+      - name: ❌ Falha - Notificar
+        if: needs.validate.result == 'failure' || needs.release.result == 'failure' || needs.github-release.result == 'failure'
+        run: |
+          echo "❌ Release v${{ needs.release.outputs.version }} falhou!"
+          echo "🔍 Verifique os logs para detalhes"
+          exit 1
