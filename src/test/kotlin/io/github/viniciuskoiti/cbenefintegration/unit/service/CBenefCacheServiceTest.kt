@@ -86,7 +86,7 @@ class CBenefCacheServiceTest : BehaviorSpec({
                 val result = cBenefCacheService!!.getAllStates()
 
                 // Assert
-                result shouldHaveSize 3 // Apenas SC e ES (sucessos)
+                result shouldHaveSize 2 // Apenas SC e ES (sucessos)
                 result shouldContainKey "SC"
                 result shouldContainKey "ES"
                 result["SC"] shouldBe resultSC

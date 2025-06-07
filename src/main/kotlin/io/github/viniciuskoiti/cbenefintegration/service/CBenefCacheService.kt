@@ -60,17 +60,17 @@ class CBenefCacheService(
     fun getAllStates(): Map<String, CBenefExtractionResult> {
         val availableStates = integrationService.getAvailableStates()
 
-        return availableStates.associateWith { stateCode ->
-            getByState(stateCode)
-        }.filterValues { it != null }
-            .mapValues { it.value!! }
+        return availableStates.mapNotNull { stateCode ->
+            val result = getByState(stateCode)
+            if (result?.isSuccess() == true) stateCode to result else null
+        }.toMap()
     }
 
     fun getMultipleStates(stateCodes: List<String>): Map<String, CBenefExtractionResult> {
-        return stateCodes.associateWith { stateCode ->
-            getByState(stateCode)
-        }.filterValues { it != null }
-            .mapValues { it.value!! }
+        return stateCodes.mapNotNull { stateCode ->
+            val result = getByState(stateCode)
+            if (result?.isSuccess() == true) stateCode to result else null
+        }.toMap()
     }
 
     fun clearCache() {
